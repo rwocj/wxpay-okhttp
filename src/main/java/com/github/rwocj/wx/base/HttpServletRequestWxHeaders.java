@@ -21,11 +21,6 @@ public class HttpServletRequestWxHeaders implements WxHeaders {
     }
 
     @Override
-    public String getRequestID() {
-        return request.getHeader(REQUEST_ID);
-    }
-
-    @Override
     public String getWechatpayTimestamp() {
         return request.getHeader(WECHATPAY_TIMESTAMP);
     }

@@ -22,7 +22,13 @@ public interface WxHeaders {
 
     String getWechatpaySignature();
 
-    String getRequestID();
+    /**
+     * 微信通知请求header没有Request-ID，返回null会导致验签失败，故默认返回空字符串
+     * 其他实现如果不覆盖该方法影响也不大，只是验签时错误日志没有记录request_id
+     */
+    default String getRequestID() {
+        return "";
+    }
 
     String getWechatpayTimestamp();
 

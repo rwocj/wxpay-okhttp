@@ -1,5 +1,6 @@
 package com.github.rwocj.wx.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.rwocj.wx.enums.OrderType;
@@ -23,6 +24,7 @@ public class WxCreateOrderRequest {
      * 下单类型
      */
     @NotNull
+    @JsonIgnore
     private OrderType orderType;
 
     /**

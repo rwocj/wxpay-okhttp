@@ -1,5 +1,6 @@
 package com.github.rwocj.wx.base;
 
+import com.github.rwocj.wx.util.OkHttpClientBuilderUtil;
 import com.github.rwocj.wx.util.WxPayUtil;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -36,19 +37,18 @@ public class DefaultCertificatesVerifier implements Verifier {
 
     private final byte[] apiV3Key;
 
-    private final OkHttpClient okHttpClient;
+    private final OkHttpClient okHttpClient = OkHttpClientBuilderUtil.wxPayOkHttpClient(null).build();
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    public DefaultCertificatesVerifier(byte[] apiV3Key, OkHttpClient okHttpClient) {
+    public DefaultCertificatesVerifier(byte[] apiV3Key) {
         this.apiV3Key = apiV3Key;
-        this.okHttpClient = okHttpClient;
     }
 
     @Override
     public boolean verify(String serialNumber, byte[] message, String signature) {
         if (instant == null
-            || Duration.between(instant, Instant.now()).toMinutes() >= minutesInterval) {
+                || Duration.between(instant, Instant.now()).toMinutes() >= minutesInterval) {
             if (lock.tryLock()) {
                 try {
                     autoUpdateCert();

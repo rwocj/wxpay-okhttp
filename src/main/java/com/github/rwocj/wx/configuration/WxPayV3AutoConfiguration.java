@@ -7,6 +7,7 @@ import com.github.rwocj.wx.properties.WxProperties;
 import com.github.rwocj.wx.service.WxPayV3Service;
 import com.github.rwocj.wx.util.OkHttpClientBuilderUtil;
 import com.github.rwocj.wx.util.PemUtil;
+import okhttp3.Interceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -51,15 +52,23 @@ public class WxPayV3AutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public Validator wxPayValidator() {
-        DefaultCertificatesVerifier defaultCertificatesVerifier = new DefaultCertificatesVerifier(wxPayProperties.getApiV3Key().getBytes(StandardCharsets.UTF_8));
+    public Validator wxPayValidator() throws IOException {
+        DefaultCertificatesVerifier defaultCertificatesVerifier
+                = new DefaultCertificatesVerifier(wxPayProperties.getApiV3Key().getBytes(StandardCharsets.UTF_8),
+                OkHttpClientBuilderUtil.wxPayOkHttpClient(wxPayInterceptor()).build());
         return new DefaultV3Validator(defaultCertificatesVerifier);
     }
 
     @Bean
     public WxPayV3Service wxPayV3Service() throws IOException {
-        WxPayV3OkHttpInterceptor wxPayV3OkHttpInterceptor = new WxPayV3OkHttpInterceptor(wxPayCredentials(), wxPayProperties.getMchId(), wxPayProperties.getCertificateSerialNo());
-        return new WxPayV3Service(OkHttpClientBuilderUtil.wxPayOkHttpClient(wxPayV3OkHttpInterceptor).build(),
+        return new WxPayV3Service(OkHttpClientBuilderUtil.wxPayOkHttpClient(wxPayInterceptor()).build(),
                 objectMapper, wxPayValidator(), wxProperties, wxPaySign());
     }
+
+    @Bean
+    public Interceptor wxPayInterceptor() throws IOException {
+        return new WxPayV3OkHttpInterceptor(wxPayCredentials(), wxPayProperties.getMchId(), wxPayProperties.getCertificateSerialNo());
+    }
+
+
 }

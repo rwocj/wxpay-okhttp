@@ -1,6 +1,5 @@
 package com.github.rwocj.wx.base;
 
-import com.github.rwocj.wx.util.OkHttpClientBuilderUtil;
 import com.github.rwocj.wx.util.WxPayUtil;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -37,11 +36,12 @@ public class DefaultCertificatesVerifier implements Verifier {
 
     private final byte[] apiV3Key;
 
-    private final OkHttpClient okHttpClient = OkHttpClientBuilderUtil.wxPayOkHttpClient(null).build();
+    private final OkHttpClient okHttpClient;
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    public DefaultCertificatesVerifier(byte[] apiV3Key) {
+    public DefaultCertificatesVerifier(byte[] apiV3Key, OkHttpClient okHttpClient) {
+        this.okHttpClient = okHttpClient;
         this.apiV3Key = apiV3Key;
     }
 
@@ -84,13 +84,18 @@ public class DefaultCertificatesVerifier implements Verifier {
         Request request = new Request.Builder().url(CertDownloadPath).get().build();
         Response execute = okHttpClient.newCall(request).execute();
         ResponseBody body = execute.body();
-        if (body != null && execute.isSuccessful()) {
-            String data = body.string();
-            List<X509Certificate> x509Certificates = WxPayUtil.deserializeToCerts(apiV3Key, data);
-            for (X509Certificate x509Certificate : x509Certificates) {
-                this.certificates.put(x509Certificate.getSerialNumber(), x509Certificate);
+        if (execute.isSuccessful()) {
+            if (body != null) {
+                String data = body.string();
+                List<X509Certificate> x509Certificates = WxPayUtil.deserializeToCerts(apiV3Key, data);
+                for (X509Certificate x509Certificate : x509Certificates) {
+                    this.certificates.put(x509Certificate.getSerialNumber(), x509Certificate);
+                }
             }
+        } else {
+            log.error("下载证书失败：{}", body.toString());
         }
+
         execute.close();
     }
 

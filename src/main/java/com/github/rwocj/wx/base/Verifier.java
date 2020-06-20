@@ -1,7 +1,5 @@
 package com.github.rwocj.wx.base;
 
-import java.security.cert.X509Certificate;
-
 /**
  * 签名验证
  */

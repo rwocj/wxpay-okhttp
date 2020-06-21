@@ -7,19 +7,16 @@ import com.github.rwocj.wx.dto.JSAPICreateOrderRes;
 import com.github.rwocj.wx.dto.WxCreateOrderRequest;
 import com.github.rwocj.wx.enums.OrderType;
 import com.github.rwocj.wx.properties.WxProperties;
+import com.github.rwocj.wx.util.SignUtil;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import okhttp3.Headers;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -39,14 +36,14 @@ public class WxPayV3Service {
     private final Sign sign;
 
     /**
-     * 原生下单，应用app/h5/jsapi/navtive
+     * 原生下单，得到prepay_id,适用app/h5/jsapi/navtive
      *
      * @param createOrderRequest 请求体
      * @return 预下单id, prepay_id
      * @throws WxPayException 下单失败
      */
     @SneakyThrows(JsonProcessingException.class)
-    public String nativeCreateOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
+    public String createOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
         OrderType orderType = createOrderRequest.getOrderType();
         if (orderType == null) {
             throw new WxPayException("下单请求体，orderType不能为空!");
@@ -55,7 +52,7 @@ public class WxPayV3Service {
         createOrderRequest.setMchid(wxProperties.getPay().getMchId());
         createOrderRequest.setNotifyUrl(wxProperties.getPay().getNotifyUrl());
         Request request = new Request.Builder()
-            .url(ORDER_URL + orderType.getUrl()).post(RequestBody.create(null, objectMapper.writeValueAsString(createOrderRequest))).build();
+                .url(ORDER_URL + orderType.getUrl()).post(RequestBody.create(null, objectMapper.writeValueAsString(createOrderRequest))).build();
         try {
             Response execute = okHttpClient.newCall(request).execute();
             ResponseBody body = execute.body();
@@ -84,37 +81,24 @@ public class WxPayV3Service {
     }
 
     /**
-     * jsapi下单，封装调用支付需要的参数
+     * jsapi下单，封装jsapi调用支付需要的参数
      * https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/pay/transactions/chapter3_8.shtml
      */
     public JSAPICreateOrderRes createJSAPIOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
         createOrderRequest.setOrderType(OrderType.jsapi);
-        return createOrderRes(nativeCreateOrder(createOrderRequest));
+        return SignUtil.sign(createOrder(createOrderRequest), wxProperties.getAppId(), sign);
     }
+
 
     /**
      * 验证微信发送过来的请求，以确保请求来自微信支付
      *
-     * @param request 请求
+     * @param headers 请求header
      * @param body    请求体
      * @return true表示请求来自微信
      */
-    public boolean validateWxRequest(HttpServletRequest request, String body) {
-        return validator.validate(new HttpServletRequestWxHeaders(request), body);
-    }
-
-    private JSAPICreateOrderRes createOrderRes(String prepay_id) {
-        JSAPICreateOrderRes res = new JSAPICreateOrderRes();
-        res.setAppId(wxProperties.getAppId());
-        res.setTimeStamp(String.valueOf(System.currentTimeMillis() / 1000));
-        res.setNonceStr(UUID.randomUUID().toString().replaceAll("-", ""));
-        res.setPackageValue("prepay_id=" + prepay_id);
-        res.setSignType("RSA");
-        res.setPaySign(sign.sign((res.getAppId() + "\n"
-            + res.getTimeStamp() + "\n"
-            + res.getNonceStr() + "\n"
-            + res.getPackageValue() + "\n").getBytes(StandardCharsets.UTF_8)));
-        return res;
+    public boolean validateWxRequest(WxHeaders headers, String body) {
+        return validator.validate(headers, body);
     }
 
     private String buildHeader(Headers headers) {

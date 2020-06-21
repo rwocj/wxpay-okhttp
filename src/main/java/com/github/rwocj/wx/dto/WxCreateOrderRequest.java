@@ -103,6 +103,18 @@ public class WxCreateOrderRequest {
     @JsonProperty("scene_info")
     private SceneInfo sceneInfo;
 
+    public WxCreateOrderRequest() {
+
+    }
+
+    public WxCreateOrderRequest(String description, String outTradeNo, OrderType orderType, Amount amount, Payer payer) {
+        this.description = description;
+        this.outTradeNo = outTradeNo;
+        this.orderType = orderType;
+        this.amount = amount;
+        this.payer = payer;
+    }
+
     @Data
     @Builder
     @JsonInclude(JsonInclude.Include.NON_NULL)

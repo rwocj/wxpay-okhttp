@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import okhttp3.HttpUrl;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -12,18 +13,13 @@ public class DefaultV3Credentials implements Credentials {
     private final Sign sign;
 
     @Override
-    public String getSchema() {
-        return "WECHATPAY2-SHA256-RSA2048";
-    }
-
-    @Override
     public String getToken(String method, String url, String body, String machId, String certificateSerialNo) {
         if (body == null) {
             body = "";
         }
         String nonceStr = UUID.randomUUID().toString().replaceAll("-", "");
         long timestamp = System.currentTimeMillis() / 1000;
-        String message = buildMessage(method, HttpUrl.parse(url), timestamp, nonceStr, body);
+        String message = buildMessage(method, Objects.requireNonNull(HttpUrl.parse(url)), timestamp, nonceStr, body);
         String signature = sign.sign(message.getBytes(StandardCharsets.UTF_8));
         return "mchid=\"" + machId + "\","
             + "nonce_str=\"" + nonceStr + "\","

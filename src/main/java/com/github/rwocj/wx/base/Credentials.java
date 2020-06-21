@@ -13,7 +13,9 @@ public interface Credentials {
      *
      * @return 目前默认为WECHATPAY2-SHA256-RSA2048
      */
-    String getSchema();
+    default String getSchema() {
+        return "WECHATPAY2-SHA256-RSA2048";
+    }
 
     /**
      * 生成token

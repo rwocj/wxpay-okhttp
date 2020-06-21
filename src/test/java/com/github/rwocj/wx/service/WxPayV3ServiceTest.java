@@ -11,40 +11,38 @@ import com.github.rwocj.wx.util.PemUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.ThrowingSupplier;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 class WxPayV3ServiceTest {
 
     private static WxPayV3Service wxPayV3Service;
 
-    private static WxProperties wxProperties;
-
     @Test
     void nativeCreateOrder() throws WxPayException {
         WxCreateOrderRequest request = new WxCreateOrderRequest();
-        request.setAppid(wxProperties.getAppId());
         request.setOrderType(OrderType.jsapi);
         request.setDescription("测试商品");
         request.setOutTradeNo("12313123123");
         request.setAmount(WxCreateOrderRequest.Amount.builder().total(100).build());
         request.setPayer(WxCreateOrderRequest.Payer.builder().openid("oT5Pk5GxcjYfGQ-MCLi0QRp45Quc").build());
-        String prepay_id = wxPayV3Service.nativeCreateOrder(request);
+        String prepay_id = wxPayV3Service.createOrder(request);
         Assertions.assertNotNull(prepay_id);
 
     }
 
     @BeforeAll
-    static void before() throws IOException {
-        ResourceBundle bundle = ResourceBundle.getBundle("application-test");
-        Assertions.assertDoesNotThrow(() -> MissingResourceException.class, "未找到application-test.properties文件！");
+    static void before() throws Throwable {
+        ThrowingSupplier<ResourceBundle> resourceBundleThrowingSupplier = () -> ResourceBundle.getBundle("application-test");
+        Assertions.assertDoesNotThrow(resourceBundleThrowingSupplier, "未找到application-test.properties文件！");
+        ResourceBundle bundle = resourceBundleThrowingSupplier.get();
 
-        wxProperties = new WxProperties();
+        WxProperties wxProperties = new WxProperties();
         wxProperties.setAppId(bundle.getString("wx.app-id"));
         Assertions.assertNotNull(wxProperties.getAppId(), "appid不能为空");
 

@@ -12,10 +12,16 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.ValidationUtils;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 @AllArgsConstructor
 @Slf4j
@@ -33,6 +39,8 @@ public class WxPayV3Service {
 
     private final Sign sign;
 
+    private final org.springframework.validation.Validator hibernateValidator;
+
     /**
      * 原生下单，得到prepay_id,适用app/h5/jsapi/navtive
      *
@@ -42,10 +50,6 @@ public class WxPayV3Service {
      */
     @SneakyThrows(JsonProcessingException.class)
     public String createOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
-        OrderType orderType = createOrderRequest.getOrderType();
-        if (orderType == null) {
-            throw new WxPayException("下单请求体，orderType不能为空!");
-        }
         if (createOrderRequest.getAppid() == null) {
             createOrderRequest.setAppid(wxProperties.getAppId());
         }
@@ -55,6 +59,10 @@ public class WxPayV3Service {
         if (createOrderRequest.getNotifyUrl() == null) {
             createOrderRequest.setNotifyUrl(wxProperties.getPay().getNotifyUrl());
         }
+
+        validateOrderRequest(createOrderRequest);
+
+        OrderType orderType = createOrderRequest.getOrderType();
         Request request = new Request.Builder()
                 .url(ORDER_URL + orderType.getUrl())
                 .post(RequestBody.create(MediaType.parse("application/json;charset=utf-8"),
@@ -106,6 +114,18 @@ public class WxPayV3Service {
      */
     public boolean validateWxRequest(WxHeaders headers, String body) {
         return validator.validate(headers, body);
+    }
+
+    private void validateOrderRequest(Object target) throws WxPayException {
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(target, target.getClass().getSimpleName(), false, 0);
+        ValidationUtils.invokeValidator(hibernateValidator, target, errors);
+        if (errors.hasErrors()) {
+            List<ObjectError> allErrors = errors.getAllErrors();
+            throw new WxPayException("支付请求参数有误：" + allErrors.stream().map(objectError -> {
+                FieldError fieldError = (FieldError) objectError;
+                return new ValidateResult(fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getRejectedValue());
+            }).collect(toList()).toString());
+        }
     }
 
     private String buildHeader(Headers headers) {

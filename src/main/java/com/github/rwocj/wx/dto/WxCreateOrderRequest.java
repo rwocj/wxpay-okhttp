@@ -40,7 +40,7 @@ public class WxCreateOrderRequest {
     @NotNull
     private Amount amount;
     /**
-     * 直连商户号，会自动配置配置文件中设置的
+     * 直连商户号，如为null,会自动配置配置文件中设置的
      *
      * @mock 1230000109
      */
@@ -54,7 +54,7 @@ public class WxCreateOrderRequest {
     @NotNull
     private String description;
     /**
-     * 通知地址,会自动配置配置文件中设置的
+     * 通知地址,如为null,会自动配置配置文件中设置的
      *
      * @mock https://www.weixin.qq.com/wxpay/pay.php
      */
@@ -84,7 +84,7 @@ public class WxCreateOrderRequest {
     @JsonProperty("goods_tag")
     private String goodsTag;
     /**
-     * 公众号ID,会自动配置配置文件中设置的
+     * 公众号ID,如为null,会自动配置配置文件中设置的
      */
     @NotNull
     private String appid;
@@ -273,4 +273,5 @@ public class WxCreateOrderRequest {
 
         }
     }
+
 }

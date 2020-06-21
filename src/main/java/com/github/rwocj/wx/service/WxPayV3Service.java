@@ -12,13 +12,11 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@Service
 @AllArgsConstructor
 @Slf4j
 public class WxPayV3Service {
@@ -48,11 +46,20 @@ public class WxPayV3Service {
         if (orderType == null) {
             throw new WxPayException("下单请求体，orderType不能为空!");
         }
-        createOrderRequest.setAppid(wxProperties.getAppId());
-        createOrderRequest.setMchid(wxProperties.getPay().getMchId());
-        createOrderRequest.setNotifyUrl(wxProperties.getPay().getNotifyUrl());
+        if (createOrderRequest.getAppid() == null) {
+            createOrderRequest.setAppid(wxProperties.getAppId());
+        }
+        if (createOrderRequest.getMchid() == null) {
+            createOrderRequest.setMchid(wxProperties.getPay().getMchId());
+        }
+        if (createOrderRequest.getNotifyUrl() == null) {
+            createOrderRequest.setNotifyUrl(wxProperties.getPay().getNotifyUrl());
+        }
         Request request = new Request.Builder()
-                .url(ORDER_URL + orderType.getUrl()).post(RequestBody.create(null, objectMapper.writeValueAsString(createOrderRequest))).build();
+                .url(ORDER_URL + orderType.getUrl())
+                .post(RequestBody.create(MediaType.parse("application/json;charset=utf-8"),
+                        objectMapper.writeValueAsString(createOrderRequest)))
+                .build();
         try {
             Response execute = okHttpClient.newCall(request).execute();
             ResponseBody body = execute.body();

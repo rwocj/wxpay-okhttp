@@ -8,6 +8,10 @@ public class WxPayException extends Exception {
         super();
     }
 
+    public WxPayException(String message, Throwable throwable) {
+        super(message, throwable);
+    }
+
     public WxPayException(String message) {
         super(message);
     }

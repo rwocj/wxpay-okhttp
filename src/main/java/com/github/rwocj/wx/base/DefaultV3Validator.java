@@ -41,7 +41,7 @@ public class DefaultV3Validator implements Validator {
                     wxHeaders.getRequestID());
             }
         } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
+            log.warn(e.getMessage());
             return false;
         }
         return true;

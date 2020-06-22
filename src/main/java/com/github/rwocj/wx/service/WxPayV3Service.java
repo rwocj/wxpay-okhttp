@@ -1,14 +1,16 @@
 package com.github.rwocj.wx.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rwocj.wx.base.*;
 import com.github.rwocj.wx.dto.JSAPICreateOrderRes;
 import com.github.rwocj.wx.dto.WxCreateOrderRequest;
+import com.github.rwocj.wx.dto.WxPayResult;
 import com.github.rwocj.wx.enums.OrderType;
 import com.github.rwocj.wx.properties.WxProperties;
+import com.github.rwocj.wx.util.AesUtil;
 import com.github.rwocj.wx.util.SignUtil;
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -17,39 +19,68 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
-@AllArgsConstructor
 @Slf4j
 public class WxPayV3Service {
 
     final static String ORDER_URL = "https://api.mch.weixin.qq.com/v3/pay/transactions/";
 
-    private final OkHttpClient okHttpClient;
+    protected final OkHttpClient okHttpClient;
 
-    private final ObjectMapper objectMapper;
+    protected final ObjectMapper objectMapper;
 
-    private final Validator validator;
+    protected final Validator validator;
 
-    private final WxProperties wxProperties;
+    protected final WxProperties wxProperties;
 
-    private final Sign sign;
+    protected final Sign sign;
 
-    private final org.springframework.validation.Validator hibernateValidator;
+    protected final org.springframework.validation.Validator hibernateValidator;
+
+    protected final AesUtil aesUtil;
+
+    public WxPayV3Service(OkHttpClient okHttpClient, ObjectMapper objectMapper,
+                          Validator validator, WxProperties wxProperties,
+                          Sign sign, org.springframework.validation.Validator hibernateValidator) {
+        this.okHttpClient = okHttpClient;
+        this.objectMapper = objectMapper;
+        this.validator = validator;
+        this.wxProperties = wxProperties;
+        this.sign = sign;
+        this.hibernateValidator = hibernateValidator;
+        this.aesUtil = new AesUtil(wxProperties.getPay().getApiV3Key().getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * 原生下单，得到prepay_id,适用app/h5/jsapi/navtive
+     * 默认请求前不进行参数验证，如果你想请求前验证参数正确性，请调用其重载方法
+     *
+     * @param createOrderRequest 下单请求体
+     * @return 预下单id, prepay_id
+     * @throws WxPayException 下单失败
+     */
+    public String createOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
+        return createOrder(createOrderRequest, false);
+    }
 
     /**
      * 原生下单，得到prepay_id,适用app/h5/jsapi/navtive
      *
-     * @param createOrderRequest 请求体
+     * @param createOrderRequest 下单请求体
+     * @param valiteRequestParam 是否请求前验证请求体参数
      * @return 预下单id, prepay_id
      * @throws WxPayException 下单失败
      */
     @SneakyThrows(JsonProcessingException.class)
-    public String createOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
+    public String createOrder(WxCreateOrderRequest createOrderRequest, boolean valiteRequestParam) throws WxPayException {
         if (createOrderRequest.getAppid() == null) {
             createOrderRequest.setAppid(wxProperties.getAppId());
         }
@@ -60,7 +91,9 @@ public class WxPayV3Service {
             createOrderRequest.setNotifyUrl(wxProperties.getPay().getNotifyUrl());
         }
 
-        validateOrderRequest(createOrderRequest);
+        if (valiteRequestParam) {
+            validateOrderRequest(createOrderRequest);
+        }
 
         OrderType orderType = createOrderRequest.getOrderType();
         Request request = new Request.Builder()
@@ -104,6 +137,24 @@ public class WxPayV3Service {
         return SignUtil.sign(createOrder(createOrderRequest), wxProperties.getAppId(), sign);
     }
 
+    /**
+     * 处理微信支付结果，请先验证签名再调用此方法
+     *
+     * @param data 微信Post过来的加密的数据
+     * @return
+     */
+    public WxPayResult buildPayResult(String data) throws WxPayException {
+        try {
+            JsonNode jsonNode = objectMapper.readTree(data);
+            JsonNode resource = jsonNode.get("resource");
+            String s = aesUtil.decryptToString(resource.get("associated_data").asText().getBytes(StandardCharsets.UTF_8),
+                    resource.get("nonce").asText().getBytes(StandardCharsets.UTF_8), resource.get("ciphertext").asText());
+            return objectMapper.readValue(s, WxPayResult.class);
+        } catch (GeneralSecurityException | JsonProcessingException e) {
+            throw new WxPayException(data, e);
+        }
+    }
+
 
     /**
      * 验证微信发送过来的请求，以确保请求来自微信支付
@@ -116,7 +167,16 @@ public class WxPayV3Service {
         return validator.validate(headers, body);
     }
 
-    private void validateOrderRequest(Object target) throws WxPayException {
+    public WxPayResult buildPayResult(HttpServletRequest request, String data) throws WxPayException {
+        boolean b = validateWxRequest(new HttpServletRequestWxHeaders(request), data);
+        if (b) {
+            return buildPayResult(data);
+        } else {
+            throw new WxPayException("验签不能过，非微信支付团队的消息！");
+        }
+    }
+
+    protected void validateOrderRequest(Object target) throws WxPayException {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(target, target.getClass().getSimpleName(), false, 0);
         ValidationUtils.invokeValidator(hibernateValidator, target, errors);
         if (errors.hasErrors()) {

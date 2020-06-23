@@ -177,7 +177,7 @@ public class WxPayV3Service {
     }
 
     protected void validateOrderRequest(Object target) throws WxPayException {
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(target, target.getClass().getSimpleName(), false, 0);
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(target, target.getClass().getSimpleName());
         ValidationUtils.invokeValidator(hibernateValidator, target, errors);
         if (errors.hasErrors()) {
             List<ObjectError> allErrors = errors.getAllErrors();

@@ -39,6 +39,7 @@ public class WxPayV3AutoConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = "wx")
+    @ConditionalOnMissingBean
     public WxProperties wxProperties() {
         return new WxProperties();
     }

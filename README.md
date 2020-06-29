@@ -1,6 +1,6 @@
 ## 基于Okhttp实现的微信支付v3接口的Spring boot starter
 
-![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.rwocj/wxpay-v3-spring-boot-starter/badge.svg)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.rwocj/wxpay-v3-spring-boot-starter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.rwocj/wxpay-v3-spring-boot-starter)
 
 #### 目前只完成直连商户h5/app/native/jsapi下单，支付通知
 

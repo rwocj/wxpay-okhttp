@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rwocj.wx.base.*;
-import com.github.rwocj.wx.dto.JSAPICreateOrderRes;
-import com.github.rwocj.wx.dto.WxCreateOrderRequest;
-import com.github.rwocj.wx.dto.WxPayResult;
+import com.github.rwocj.wx.dto.*;
 import com.github.rwocj.wx.enums.OrderType;
 import com.github.rwocj.wx.properties.WxProperties;
 import com.github.rwocj.wx.util.AesUtil;
@@ -31,7 +29,14 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class WxPayV3Service {
 
+    /**
+     * 普通商户下单url
+     */
     final static String ORDER_URL = "https://api.mch.weixin.qq.com/v3/pay/transactions/";
+    /**
+     * 电商平台退款url
+     */
+    final static String REFUND_URL = "https://api.mch.weixin.qq.com/v3/ecommerce/refunds/apply";
 
     protected final OkHttpClient okHttpClient;
 
@@ -60,7 +65,7 @@ public class WxPayV3Service {
     }
 
     /**
-     * 原生下单，得到prepay_id,适用app/h5/jsapi/navtive
+     * 普通商户原生下单，得到prepay_id,适用app/h5/jsapi/navtive
      * 默认请求前不进行参数验证，如果你想请求前验证参数正确性，请调用其重载方法
      *
      * @param createOrderRequest 下单请求体
@@ -72,7 +77,7 @@ public class WxPayV3Service {
     }
 
     /**
-     * 原生下单，得到prepay_id,适用app/h5/jsapi/navtive
+     * 普通商户原生下单，得到prepay_id,适用app/h5/jsapi/navtive
      *
      * @param createOrderRequest 下单请求体
      * @param valiteRequestParam 是否请求前验证请求体参数
@@ -124,6 +129,72 @@ public class WxPayV3Service {
             }
         } catch (IOException e) {
             throw new WxPayException("微信支付下单失败：", e);
+        }
+
+    }
+
+
+    /**
+     * 电商平台微信退款
+     * https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/ecommerce/refunds/chapter3_1.shtml
+     *
+     * @param refundRequest 退款请求体
+     * @return 退款结果
+     * @throws WxPayException 退款失败
+     */
+    public WxRefundRes refund(WxRefundRequest refundRequest) throws WxPayException {
+        return refund(refundRequest, false);
+    }
+
+    /**
+     * 电商平台微信退款
+     * https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/ecommerce/refunds/chapter3_1.shtml
+     *
+     * @param refundRequest      退款请求体
+     * @param valiteRequestParam 是否请求前验证请求体参数
+     * @return 退款结果
+     * @throws WxPayException 退款失败
+     */
+    @SneakyThrows(JsonProcessingException.class)
+    public WxRefundRes refund(WxRefundRequest refundRequest, boolean valiteRequestParam) throws WxPayException {
+        if (refundRequest.getSpAppid() == null) {
+            refundRequest.setSpAppid(wxProperties.getAppId());
+        }
+        if (refundRequest.getSubMchid() == null) {
+            refundRequest.setSubMchid(wxProperties.getPay().getMchId());
+        }
+
+        if (valiteRequestParam) {
+            validateOrderRequest(refundRequest);
+        }
+
+        Request request = new Request.Builder()
+                .url(REFUND_URL)
+                .post(RequestBody.create(MediaType.parse("application/json;charset=utf-8"),
+                        objectMapper.writeValueAsString(refundRequest)))
+                .build();
+        try {
+            Response execute = okHttpClient.newCall(request).execute();
+            ResponseBody body = execute.body();
+            if (body != null) {
+                String string = body.string();
+                log.debug("退款请求响应：{}", string);
+                if (execute.isSuccessful()) {
+                    Headers headers = execute.headers();
+                    boolean validate = validator.validate(new OkHttpWxHeaders(execute), string);
+                    if (!validate) {
+                        throw new WxPayException(String.format("验证响应失败!:响应体：%s,响应headers:%s", string, buildHeader(headers)));
+                    } else {
+                        return objectMapper.readValue(string, WxRefundRes.class);
+                    }
+                } else {
+                    throw new WxPayException(string);
+                }
+            } else {
+                throw new WxPayException("退款请求响应为空!");
+            }
+        } catch (IOException e) {
+            throw new WxPayException("微信退款失败：", e);
         }
 
     }

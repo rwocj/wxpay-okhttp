@@ -2,7 +2,9 @@ package com.github.rwocj.wx.service;
 
 import com.github.rwocj.wx.base.WxPayException;
 import com.github.rwocj.wx.dto.WxCreateOrderRequest;
+import com.github.rwocj.wx.dto.WxRefundRequest;
 import com.github.rwocj.wx.enums.OrderType;
+import com.github.rwocj.wx.properties.WxProperties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,9 @@ class WxPayV3ServiceTest {
     @Resource
     private WxPayV3Service wxPayV3Service;
 
+    @Resource
+    private WxProperties wxProperties;
+
     @Test
     void nativeCreateOrder() throws WxPayException {
         WxCreateOrderRequest request = new WxCreateOrderRequest();
@@ -32,6 +37,15 @@ class WxPayV3ServiceTest {
         System.out.println("prepay_id:" + prepay_id);
         Assertions.assertNotNull(prepay_id);
 
+    }
+
+    @Test
+    void refund() throws WxPayException {
+        WxRefundRequest refundRequest = new WxRefundRequest();
+        refundRequest.setNotifyUrl(wxProperties.getPay().getRefundNotifyUrl());
+        refundRequest.setAmount(WxRefundRequest.Amount.builder().refund(1).total(1).build());
+        refundRequest.setOutRefundNo(UUID.randomUUID().toString());
+        wxPayV3Service.refund(refundRequest);
     }
 
     @BeforeAll

@@ -12,10 +12,6 @@ import com.github.rwocj.wx.util.SignUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.ValidationUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -23,8 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 public class WxPayV3Service {
@@ -48,44 +42,28 @@ public class WxPayV3Service {
 
     protected final Sign sign;
 
-    protected final org.springframework.validation.Validator hibernateValidator;
-
     protected final AesUtil aesUtil;
 
     public WxPayV3Service(OkHttpClient okHttpClient, ObjectMapper objectMapper,
                           Validator validator, WxProperties wxProperties,
-                          Sign sign, org.springframework.validation.Validator hibernateValidator) {
+                          Sign sign) {
         this.okHttpClient = okHttpClient;
         this.objectMapper = objectMapper;
         this.validator = validator;
         this.wxProperties = wxProperties;
         this.sign = sign;
-        this.hibernateValidator = hibernateValidator;
         this.aesUtil = new AesUtil(wxProperties.getPay().getApiV3Key().getBytes(StandardCharsets.UTF_8));
     }
 
     /**
      * 普通商户原生下单，得到prepay_id,适用app/h5/jsapi/navtive
-     * 默认请求前不进行参数验证，如果你想请求前验证参数正确性，请调用其重载方法
      *
      * @param createOrderRequest 下单请求体
-     * @return 预下单id, prepay_id
-     * @throws WxPayException 下单失败
-     */
-    public String createOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
-        return createOrder(createOrderRequest, false);
-    }
-
-    /**
-     * 普通商户原生下单，得到prepay_id,适用app/h5/jsapi/navtive
-     *
-     * @param createOrderRequest 下单请求体
-     * @param valiteRequestParam 是否请求前验证请求体参数
      * @return 预下单id, prepay_id
      * @throws WxPayException 下单失败
      */
     @SneakyThrows(JsonProcessingException.class)
-    public String createOrder(WxCreateOrderRequest createOrderRequest, boolean valiteRequestParam) throws WxPayException {
+    public String createOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
         if (createOrderRequest.getAppid() == null) {
             createOrderRequest.setAppid(wxProperties.getAppId());
         }
@@ -96,16 +74,11 @@ public class WxPayV3Service {
             createOrderRequest.setNotifyUrl(wxProperties.getPay().getNotifyUrl());
         }
 
-        if (valiteRequestParam) {
-            validateOrderRequest(createOrderRequest);
-        }
-
         OrderType orderType = createOrderRequest.getOrderType();
         String url = ORDER_URL + orderType.getUrl();
         String res = request(url, createOrderRequest);
         return objectMapper.readTree(res).get("prepay_id").asText();
     }
-
 
     /**
      * 电商平台微信退款
@@ -115,30 +88,13 @@ public class WxPayV3Service {
      * @return 退款结果
      * @throws WxPayException 退款失败
      */
-    public WxRefundRes refund(WxRefundRequest refundRequest) throws WxPayException {
-        return refund(refundRequest, false);
-    }
-
-    /**
-     * 电商平台微信退款
-     * https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/ecommerce/refunds/chapter3_1.shtml
-     *
-     * @param refundRequest      退款请求体
-     * @param valiteRequestParam 是否请求前验证请求体参数
-     * @return 退款结果
-     * @throws WxPayException 退款失败
-     */
     @SneakyThrows(JsonProcessingException.class)
-    public WxRefundRes refund(WxRefundRequest refundRequest, boolean valiteRequestParam) throws WxPayException {
+    public WxRefundRes refund(WxRefundRequest refundRequest) throws WxPayException {
         if (refundRequest.getSpAppid() == null) {
             refundRequest.setSpAppid(wxProperties.getAppId());
         }
         if (refundRequest.getSubMchid() == null) {
             refundRequest.setSubMchid(wxProperties.getPay().getMchId());
-        }
-
-        if (valiteRequestParam) {
-            validateOrderRequest(refundRequest);
         }
 
         String res = request(REFUND_URL, refundRequest);
@@ -190,18 +146,6 @@ public class WxPayV3Service {
             return buildPayResult(data);
         } else {
             throw new WxPayException("验签不能过，非微信支付团队的消息！");
-        }
-    }
-
-    protected void validateOrderRequest(Object target) throws WxPayException {
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(target, target.getClass().getSimpleName());
-        ValidationUtils.invokeValidator(hibernateValidator, target, errors);
-        if (errors.hasErrors()) {
-            List<ObjectError> allErrors = errors.getAllErrors();
-            throw new WxPayException("支付请求参数有误：" + allErrors.stream().map(objectError -> {
-                FieldError fieldError = (FieldError) objectError;
-                return new ValidateResult(fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getRejectedValue());
-            }).collect(toList()).toString());
         }
     }
 

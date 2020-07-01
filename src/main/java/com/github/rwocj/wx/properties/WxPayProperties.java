@@ -2,38 +2,42 @@ package com.github.rwocj.wx.properties;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
 
 @Data
 public class WxPayProperties {
-    /***
+    /**
      * 微信支付商户号
+     *
+     * @required
      */
-    @NotEmpty
     private String mchId;
 
     /**
      * 微信支付证书序列号
+     *
+     * @required
      */
-    @NotEmpty
     private String certificateSerialNo;
 
     /**
      * v3接口密钥
+     *
+     * @required
      */
-    @NotEmpty
     private String apiV3Key;
 
     /**
      * 微信支付私钥文件resource路径,如classpath:/cert/app.pem
+     *
+     * @required
      */
-    @NotEmpty
     private String privateKeyPath;
 
     /**
      * 支付通知地址
+     *
+     * @required
      */
-    @NotEmpty
     private String notifyUrl;
 
     /**

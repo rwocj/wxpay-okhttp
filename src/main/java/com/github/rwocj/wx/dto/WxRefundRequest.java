@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 
 /**
  * 微信退款请求体
@@ -18,14 +17,16 @@ public class WxRefundRequest {
 
     /**
      * 二级商户号
+     *
+     * @required
      */
-    @NotNull
     @JsonProperty("sub_mchid")
     private String subMchid;
     /**
      * 电商平台APPID
+     *
+     * @required
      */
-    @NotNull
     @JsonProperty("sp_appid")
     private String spAppid;
     /**
@@ -47,8 +48,9 @@ public class WxRefundRequest {
      * 商户退款单号
      * 商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@，同一退款单号多次请求只退一笔
      * 退款失败的话，再使用相同的退款单号请求
+     *
+     * @required
      */
-    @NotNull
     @JsonProperty("out_refund_no")
     private String outRefundNo;
     /**
@@ -60,8 +62,9 @@ public class WxRefundRequest {
     private String reason;
     /**
      * 订单金额
+     *
+     * @required
      */
-    @NotNull
     @JsonProperty("amount")
     private Amount amount;
     /**
@@ -80,14 +83,16 @@ public class WxRefundRequest {
         /**
          * 退款金额
          * 退款金额，币种的最小单位，只能为整数，不能超过原订单支付金额
+         *
+         * @required
          */
-        @NotNull
         @JsonProperty("refund")
         private int refund;
         /**
          * 原订单金额
+         *
+         * @required
          */
-        @NotNull
         @JsonProperty("total")
         private int total;
         /**

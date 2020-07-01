@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -16,26 +15,30 @@ public class WxRefundRes {
 
     /**
      * 微信退款单号
+     *
+     * @required
      */
-    @NotNull
     @JsonProperty("refund_id")
     private String refundId;
     /**
      * 商户退款单号
+     *
+     * @required
      */
-    @NotNull
     @JsonProperty("out_refund_no")
     private String outRefundNo;
     /**
      * 退款创建时间
+     *
+     * @required
      */
-    @NotNull
     @JsonProperty("create_time")
     private String createTime;
     /**
      * 订单金额
+     *
+     * @required
      */
-    @NotNull
     @JsonProperty("amount")
     private Amount amount;
     /**
@@ -49,14 +52,16 @@ public class WxRefundRes {
     public static class Amount {
         /**
          * 退款金额
+         *
+         * @required
          */
-        @NotNull
         @JsonProperty("refund")
         private int refund;
         /**
          * 用户退款金额
+         *
+         * @required
          */
-        @NotNull
         @JsonProperty("payer_refund")
         private int payerRefund;
         /**
@@ -84,30 +89,34 @@ public class WxRefundRes {
          * 优惠范围
          * GLOBAL：全场代金券
          * SINGLE：单品优惠
+         *
+         * @required
          */
-        @NotNull
         @JsonProperty("scope")
         private String scope;
         /**
          * 优惠类型
          * COUPON：充值型代金券，商户需要预先充值营销经费
          * DISCOUNT：免充值型优惠券，商户不需要预先充值营销经费
+         *
+         * @required
          */
-        @NotNull
         @JsonProperty("type")
         private String type;
         /**
          * 优惠券面额
          * 用户享受优惠的金额（优惠券面额=微信出资金额+商家出资金额+其他出资方金额 ）。
+         *
+         * @required
          */
-        @NotNull
         @JsonProperty("amount")
         private int amount;
         /**
          * 优惠退款金额
-         * 代金券退款金额<=退款金额，退款金额-代金券或立减优惠退款金额为现金，说明详见《代金券或立减优惠》 。
+         * 代金券退款金额<=退款金额，退款金额-代金券或立减优惠退款金额为现金，说明详见《代金券或立减优惠》。
+         *
+         * @required
          */
-        @NotNull
         @JsonProperty("refund_amount")
         private int refundAmount;
 

@@ -6,12 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.rwocj.wx.enums.OrderType;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -24,8 +19,9 @@ public class WxCreateOrderRequest {
 
     /**
      * 下单类型
+     *
+     * @required
      */
-    @NotNull
     @JsonIgnore
     private OrderType orderType;
 
@@ -35,43 +31,38 @@ public class WxCreateOrderRequest {
      * @mock 2018-06-08T10:34:56+08:00
      */
     @JsonProperty("time_expire")
-    @Length(max = 64)
     private String timeExpire;
     /**
      * 订单金额
+     *
+     * @required
      */
-    @NotNull
-    @Valid
     private Amount amount;
     /**
      * 直连商户号，如为null,会自动配置配置文件中设置的
      *
      * @mock 1230000109
+     * @required
      */
-    @NotNull
-    @Length(max = 32)
     private String mchid;
     /**
      * 商品描述
      *
      * @mock Image形象店-深圳腾大-QQ公仔
+     * @required
      */
-    @NotNull
-    @Length(max = 127)
     private String description;
     /**
      * 通知地址,如为null,会自动配置配置文件中设置的
      *
      * @mock https://www.weixin.qq.com/wxpay/pay.php
+     * @required
      */
-    @NotNull
-    @Length(max = 256)
     @JsonProperty("notify_url")
     private String notifyUrl;
     /**
      * 支付者信息
      */
-    @Valid
     private Payer payer;
     /**
      * 商户订单号
@@ -79,30 +70,27 @@ public class WxCreateOrderRequest {
      * 特殊规则：最小字符长度为6
      *
      * @mock 1217752501201407033233368018
+     * @required
      */
-    @NotNull
     @JsonProperty("out_trade_no")
-    @Length(max = 32)
     private String outTradeNo;
     /**
      * 订单优惠标记
      *
      * @mock WXG
      */
-    @Length(max = 32)
     @JsonProperty("goods_tag")
     private String goodsTag;
     /**
      * 公众号ID,如为null,会自动配置配置文件中设置的
+     *
+     * @required
      */
-    @NotNull
-    @Length(max = 32)
     private String appid;
     /**
      * 附加数据
      * 附加数据，在查询API和支付通知中原样返回，可作为自定义参数使用
      */
-    @Length(max = 128)
     private String attach;
     /**
      * 优惠功能详情
@@ -112,7 +100,6 @@ public class WxCreateOrderRequest {
      * 场景信息
      */
     @JsonProperty("scene_info")
-    @Valid
     private SceneInfo sceneInfo;
 
     public WxCreateOrderRequest() {
@@ -134,8 +121,9 @@ public class WxCreateOrderRequest {
 
         /**
          * 总金额,订单总金额，单位为分。
+         *
+         * @required
          */
-        @Positive
         private int total;
 
         /**
@@ -144,7 +132,6 @@ public class WxCreateOrderRequest {
          *
          * @mock CNY
          */
-        @Length(max = 16)
         private String currency;
 
     }
@@ -158,9 +145,8 @@ public class WxCreateOrderRequest {
          * 用户在直连商户appid下的唯一标识。
          *
          * @mock oUpF8uMuAJO_M2pxb1Q9zNjWeS6o
+         * @required
          */
-        @NotNull
-        @Length(max = 128)
         private String openid;
 
     }
@@ -174,7 +160,6 @@ public class WxCreateOrderRequest {
          * 商品小票ID
          */
         @JsonProperty("invoice_id")
-        @Length(max = 32)
         private String invoiceId;
         /**
          * 订单原价
@@ -183,15 +168,14 @@ public class WxCreateOrderRequest {
          * 3、该字段主要用于防止同一张小票分多次支付，以享受多次优惠的情况，正常支付订单不必上传此参数
          *
          * @mock 600
+         * @required
          */
         @JsonProperty("cost_price")
-        @Positive
         private Integer costPrice;
         /**
          * 单品列表
          */
         @JsonProperty("goods_detail")
-        @Valid
         private List<GoodsDetail> goodsDetail;
 
 
@@ -202,35 +186,33 @@ public class WxCreateOrderRequest {
             /**
              * 商品实际名称
              */
-            @Length(max = 256)
             @JsonProperty("goods_name")
             private String goodsName;
             /**
              * 微信侧商品编码
              * 微信支付定义的统一商品编号（没有可不传）
              */
-            @Length(max = 32)
             @JsonProperty("wechatpay_goods_id")
             private String wechatpayGoodsId;
             /**
              * 商品数量
              */
-            @PositiveOrZero
             private int quantity;
             /**
              * 商户侧商品编码
              * 由半角的大小写字母、数字、中划线、下划线中的一种或几种组成。
+             *
+             * @required
              */
-            @NotNull
-            @Length(max = 32)
             @JsonProperty("merchant_goods_id")
             private String merchantGoodsId;
             /**
              * 商品单价
              * 商品单价，单位为分
+             *
+             * @required
              */
             @JsonProperty("unit_price")
-            @Positive
             private int unitPrice;
 
         }
@@ -245,7 +227,6 @@ public class WxCreateOrderRequest {
          * 门店信息
          */
         @JsonProperty("store_info")
-        @Valid
         private StoreInfo storeInfo;
         /**
          * 商户端设备号
@@ -253,7 +234,6 @@ public class WxCreateOrderRequest {
          *
          * @mock 013467007045764
          */
-        @Length(max = 32)
         @JsonProperty("device_id")
         private String deviceId;
         /**
@@ -261,9 +241,8 @@ public class WxCreateOrderRequest {
          * 调用微信支付API的机器IP，支持IPv4和IPv4两种格式的IP地址。
          *
          * @mock 14.23.150.211
+         * @required
          */
-        @NotNull
-        @Length(max = 45)
         @JsonProperty("payer_client_ip")
         private String payerClientIp;
 
@@ -273,29 +252,28 @@ public class WxCreateOrderRequest {
 
             /**
              * 详细地址
+             *
+             * @required
              */
-            @NotNull
-            @Length(max = 512)
             private String address;
             /**
              * 地区编码
              * 地区编码，详细请见省市区编号对照表(https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/ecommerce/applyments/chapter4_1.shtml)
+             *
+             * @required
              */
-            @NotNull
-            @Length(max = 32)
             @JsonProperty("area_code")
             private String areaCode;
             /**
              * 门店名称
+             *
+             * @required
              */
-            @NotNull
-            @Length(max = 256)
             private String name;
             /**
              * 门店编号
              * 商户侧门店编号
              */
-            @Length(max = 32)
             private String id;
 
         }

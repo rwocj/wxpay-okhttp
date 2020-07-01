@@ -9,11 +9,9 @@ import com.github.rwocj.wx.util.PemUtil;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.validation.MessageInterpolatorFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -24,17 +22,8 @@ public class WxPayV3AutoConfiguration {
 
     private final ObjectMapper objectMapper;
 
-    private final org.springframework.validation.Validator hibernateValidator;
-
-    public WxPayV3AutoConfiguration(ObjectProvider<ObjectMapper> objectProvider,
-                                    ObjectProvider<org.springframework.validation.Validator> hibernateValidatorProvider) {
+    public WxPayV3AutoConfiguration(ObjectProvider<ObjectMapper> objectProvider) {
         this.objectMapper = objectProvider.getIfAvailable(ObjectMapper::new);
-        this.hibernateValidator = hibernateValidatorProvider.getIfAvailable(() -> {
-            LocalValidatorFactoryBean factoryBean = new LocalValidatorFactoryBean();
-            MessageInterpolatorFactory interpolatorFactory = new MessageInterpolatorFactory();
-            factoryBean.setMessageInterpolator(interpolatorFactory.getObject());
-            return factoryBean;
-        });
     }
 
     @Bean
@@ -79,7 +68,7 @@ public class WxPayV3AutoConfiguration {
                                          Validator validator,
                                          Sign sign, WxProperties wxProperties) {
         return new WxPayV3Service(OkHttpClientBuilderUtil.wxPayOkHttpClient(wxPayV3OkHttpInterceptor).build(),
-                objectMapper, validator, wxProperties, sign, hibernateValidator);
+                objectMapper, validator, wxProperties, sign);
     }
 
 

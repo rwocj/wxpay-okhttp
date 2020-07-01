@@ -7,6 +7,7 @@ import com.github.rwocj.wx.enums.OrderType;
 import com.github.rwocj.wx.properties.WxProperties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -40,6 +41,7 @@ class WxPayV3ServiceTest {
     }
 
     @Test
+    @Disabled
     void refund() throws WxPayException {
         WxRefundRequest refundRequest = new WxRefundRequest();
         refundRequest.setNotifyUrl(wxProperties.getPay().getRefundNotifyUrl());

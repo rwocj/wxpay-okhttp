@@ -110,7 +110,7 @@
                     <charset>UTF-8</charset>
                     <encoding>UTF-8</encoding>
                     <docencoding>UTF-8</docencoding>
-                    <excludePackageNames>com.github.rwocj.**</excludePackageNames>
+                    <excludePackageNames>com.github.rwocj.wx.dto,com.github.rwocj.wx.properties</excludePackageNames>
                 </configuration>
                 <executions>
                     <execution>

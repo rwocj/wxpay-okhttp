@@ -25,6 +25,7 @@ public interface Credentials {
      * @param body                请求体，GET方法为空
      * @param machId              商户Id
      * @param certificateSerialNo 证书序列号
+     * @return 签名信息
      */
     String getToken(@NonNull String method, @NonNull String url, String body, @NonNull String machId, @NonNull String certificateSerialNo);
 }

@@ -104,6 +104,10 @@ public class WxPayV3Service {
     /**
      * jsapi下单，封装jsapi调用支付需要的参数
      * https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/pay/transactions/chapter3_8.shtml
+     *
+     * @param createOrderRequest 下单请求体
+     * @return 下单成功后JSAPI调用支付需要的数据
+     * @throws WxPayException 下单失败
      */
     public JSAPICreateOrderRes createJSAPIOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
         createOrderRequest.setOrderType(OrderType.jsapi);
@@ -114,7 +118,8 @@ public class WxPayV3Service {
      * 处理微信支付结果，请先验证签名再调用此方法
      *
      * @param data 微信Post过来的加密的数据
-     * @return
+     * @return 支付结果
+     * @throws WxPayException 处理支付结果失败，如非微信通知的支付结果
      */
     public WxPayResult buildPayResult(String data) throws WxPayException {
         try {

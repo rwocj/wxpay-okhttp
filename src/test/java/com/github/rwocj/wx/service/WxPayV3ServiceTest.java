@@ -69,4 +69,9 @@ class WxPayV3ServiceTest {
         WxPayResult wxPayResult = wxPayV3Service.queryOrderByOutTradeId("1000000020200622102353");
         System.out.println(new ObjectMapper().writeValueAsString(wxPayResult));
     }
+
+    @Test
+    void closeOrder() throws WxPayException {
+        wxPayV3Service.closeOrder("1000000020200617085523");
+    }
 }

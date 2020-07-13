@@ -3,6 +3,7 @@ package com.github.rwocj.wx.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.rwocj.wx.base.*;
 import com.github.rwocj.wx.dto.*;
 import com.github.rwocj.wx.enums.OrderType;
@@ -135,10 +136,25 @@ public class WxPayV3Service {
     }
 
     /**
+     * 关单API
+     *
+     * @param outTradeId 商户订单号
+     * @throws WxPayException 关单失败
+     */
+    public void closeOrder(String outTradeId) throws WxPayException {
+        Assert.notNull(outTradeId, "商户订单号不能为nll");
+        String url = "https://api.mch.weixin.qq.com/v3/pay/transactions/out-trade-no/" + outTradeId + "/close";
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("mchid", wxProperties.getPay().getMchId());
+        post(url, objectNode);
+    }
+
+    /**
      * 微信支付订单号查询
      *
      * @param transactionsId 微信订单号，不能为空
      * @return 支付结果
+     * @throws WxPayException 查单失败
      */
     public WxPayResult queryOrderByTransactionsId(String transactionsId) throws WxPayException {
         Assert.notNull(transactionsId, "微信订单号不能为nll");
@@ -150,6 +166,7 @@ public class WxPayV3Service {
      *
      * @param outTradeId 商户订单号，不能为空
      * @return 支付结果
+     * @throws WxPayException 查单失败
      */
     public WxPayResult queryOrderByOutTradeId(String outTradeId) throws WxPayException {
         Assert.notNull(outTradeId, "商户订单号不能为nll");
@@ -208,10 +225,10 @@ public class WxPayV3Service {
             Response execute = okHttpClient.newCall(request).execute();
             log.debug("微信响应码：{}", execute.code());
             ResponseBody body = execute.body();
-            if (body != null) {
-                String string = body.string();
-                log.debug("微信响应：{}", string);
-                if (execute.isSuccessful()) {
+            if (execute.isSuccessful()) {
+                if (body != null) {
+                    String string = body.string();
+                    log.debug("微信响应：{}", string);
                     Headers headers = execute.headers();
                     boolean validate = validator.validate(new OkHttpWxHeaders(execute), string);
                     if (!validate) {
@@ -220,10 +237,10 @@ public class WxPayV3Service {
                         return string;
                     }
                 } else {
-                    throw new WxPayException(string);
+                    return "";
                 }
             } else {
-                throw new WxPayException("微信请求响应为空!");
+                throw new WxPayException(body != null ? body.string() : "请求响应码:" + execute.code());
             }
         } catch (IOException e) {
             throw new WxPayException("微信请求失败：", e);

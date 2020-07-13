@@ -1,7 +1,10 @@
 package com.github.rwocj.wx.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rwocj.wx.base.WxPayException;
 import com.github.rwocj.wx.dto.WxCreateOrderRequest;
+import com.github.rwocj.wx.dto.WxPayResult;
 import com.github.rwocj.wx.dto.WxRefundRequest;
 import com.github.rwocj.wx.enums.OrderType;
 import com.github.rwocj.wx.properties.WxProperties;
@@ -55,4 +58,15 @@ class WxPayV3ServiceTest {
         Assertions.assertDoesNotThrow(() -> ResourceBundle.getBundle("application-test"), "未找到application-test.properties文件！");
     }
 
+    @Test
+    void queryOrderByTransactionsId() throws WxPayException, JsonProcessingException {
+        WxPayResult wxPayResult = wxPayV3Service.queryOrderByTransactionsId("4200000598202006225181965671");
+        System.out.println(new ObjectMapper().writeValueAsString(wxPayResult));
+    }
+
+    @Test
+    void queryOrderByOutTradeId() throws WxPayException, JsonProcessingException {
+        WxPayResult wxPayResult = wxPayV3Service.queryOrderByOutTradeId("1000000020200622102353");
+        System.out.println(new ObjectMapper().writeValueAsString(wxPayResult));
+    }
 }

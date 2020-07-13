@@ -12,6 +12,7 @@ import com.github.rwocj.wx.util.SignUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class WxPayV3Service {
 
         OrderType orderType = createOrderRequest.getOrderType();
         String url = ORDER_URL + orderType.getUrl();
-        String res = request(url, createOrderRequest);
+        String res = post(url, createOrderRequest);
         return objectMapper.readTree(res).get("prepay_id").asText();
     }
 
@@ -97,7 +98,7 @@ public class WxPayV3Service {
             refundRequest.setSubMchid(wxProperties.getPay().getMchId());
         }
 
-        String res = request(REFUND_URL, refundRequest);
+        String res = post(REFUND_URL, refundRequest);
         return objectMapper.readValue(res, WxRefundRes.class);
     }
 
@@ -133,6 +134,33 @@ public class WxPayV3Service {
         }
     }
 
+    /**
+     * 微信支付订单号查询
+     *
+     * @param transactionsId 微信订单号，不能为空
+     * @return 支付结果
+     */
+    public WxPayResult queryOrderByTransactionsId(String transactionsId) throws WxPayException {
+        Assert.notNull(transactionsId, "微信订单号不能为nll");
+        return queryOrder("https://api.mch.weixin.qq.com/v3/pay/transactions/id/" + transactionsId + "?mchid=" + wxProperties.getPay().getMchId());
+    }
+
+    /**
+     * 商户订单号查询
+     *
+     * @param outTradeId 商户订单号，不能为空
+     * @return 支付结果
+     */
+    public WxPayResult queryOrderByOutTradeId(String outTradeId) throws WxPayException {
+        Assert.notNull(outTradeId, "商户订单号不能为nll");
+        return queryOrder("https://api.mch.weixin.qq.com/v3/pay/transactions/out-trade-no/" + outTradeId + "?mchid=" + wxProperties.getPay().getMchId());
+    }
+
+    @SneakyThrows(JsonProcessingException.class)
+    private WxPayResult queryOrder(String url) throws WxPayException {
+        String result = get(url);
+        return objectMapper.readValue(result, WxPayResult.class);
+    }
 
     /**
      * 验证微信发送过来的请求，以确保请求来自微信支付
@@ -154,8 +182,17 @@ public class WxPayV3Service {
         }
     }
 
+    public String get(String url) throws WxPayException {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        log.debug("微信url：{}", url);
+        return request(request);
+    }
+
+
     @SneakyThrows(JsonProcessingException.class)
-    protected String request(String url, Object requestObject) throws WxPayException {
+    public String post(String url, Object requestObject) throws WxPayException {
         String content = objectMapper.writeValueAsString(requestObject);
         Request request = new Request.Builder()
                 .url(url)
@@ -163,12 +200,17 @@ public class WxPayV3Service {
                         content))
                 .build();
         log.debug("微信请求体：{}", content);
+        return request(request);
+    }
+
+    protected String request(Request request) throws WxPayException {
         try {
             Response execute = okHttpClient.newCall(request).execute();
+            log.debug("微信响应码：{}", execute.code());
             ResponseBody body = execute.body();
             if (body != null) {
                 String string = body.string();
-                log.debug("微信请求响应：{}", string);
+                log.debug("微信响应：{}", string);
                 if (execute.isSuccessful()) {
                     Headers headers = execute.headers();
                     boolean validate = validator.validate(new OkHttpWxHeaders(execute), string);

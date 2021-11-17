@@ -2,13 +2,15 @@ package com.github.rwocj.wx.util;
 
 import com.github.rwocj.wx.base.Sign;
 import com.github.rwocj.wx.dto.JSAPICreateOrderRes;
-import lombok.experimental.UtilityClass;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-@UtilityClass
 public class SignUtil {
+
+    private SignUtil() {
+
+    }
 
     public static JSAPICreateOrderRes sign(String prepay_id, String appid, Sign sign) {
         JSAPICreateOrderRes res = new JSAPICreateOrderRes();

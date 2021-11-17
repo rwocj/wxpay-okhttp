@@ -1,6 +1,5 @@
 package com.github.rwocj.wx.base;
 
-import lombok.extern.slf4j.Slf4j;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -10,7 +9,6 @@ import okio.Buffer;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-@Slf4j
 public class WxPayV3OkHttpInterceptor implements Interceptor {
 
     static final String os = System.getProperty("os.name") + "/" + System.getProperty("os.version");

@@ -1,9 +1,5 @@
 package com.github.rwocj.wx.properties;
 
-import lombok.Data;
-
-
-@Data
 public class WxProperties {
 
     /**
@@ -17,4 +13,20 @@ public class WxProperties {
      * @required
      */
     private WxPayProperties pay;
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public WxPayProperties getPay() {
+        return pay;
+    }
+
+    public void setPay(WxPayProperties pay) {
+        this.pay = pay;
+    }
 }

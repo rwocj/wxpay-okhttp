@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.rwocj.wx.enums.OrderType;
-import lombok.Builder;
-import lombok.Data;
 
 import java.util.List;
 
@@ -13,7 +11,6 @@ import java.util.List;
  * app/native/h5/jsapi下单请求体
  * https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/pay/transactions/chapter3_2.shtml
  */
-@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WxCreateOrderRequest {
 
@@ -114,8 +111,110 @@ public class WxCreateOrderRequest {
         this.payer = payer;
     }
 
-    @Data
-    @Builder
+    public OrderType getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(OrderType orderType) {
+        this.orderType = orderType;
+    }
+
+    public String getTimeExpire() {
+        return timeExpire;
+    }
+
+    public void setTimeExpire(String timeExpire) {
+        this.timeExpire = timeExpire;
+    }
+
+    public Amount getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Amount amount) {
+        this.amount = amount;
+    }
+
+    public String getMchid() {
+        return mchid;
+    }
+
+    public void setMchid(String mchid) {
+        this.mchid = mchid;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getNotifyUrl() {
+        return notifyUrl;
+    }
+
+    public void setNotifyUrl(String notifyUrl) {
+        this.notifyUrl = notifyUrl;
+    }
+
+    public Payer getPayer() {
+        return payer;
+    }
+
+    public void setPayer(Payer payer) {
+        this.payer = payer;
+    }
+
+    public String getOutTradeNo() {
+        return outTradeNo;
+    }
+
+    public void setOutTradeNo(String outTradeNo) {
+        this.outTradeNo = outTradeNo;
+    }
+
+    public String getGoodsTag() {
+        return goodsTag;
+    }
+
+    public void setGoodsTag(String goodsTag) {
+        this.goodsTag = goodsTag;
+    }
+
+    public String getAppid() {
+        return appid;
+    }
+
+    public void setAppid(String appid) {
+        this.appid = appid;
+    }
+
+    public String getAttach() {
+        return attach;
+    }
+
+    public void setAttach(String attach) {
+        this.attach = attach;
+    }
+
+    public Detail getDetail() {
+        return detail;
+    }
+
+    public void setDetail(Detail detail) {
+        this.detail = detail;
+    }
+
+    public SceneInfo getSceneInfo() {
+        return sceneInfo;
+    }
+
+    public void setSceneInfo(SceneInfo sceneInfo) {
+        this.sceneInfo = sceneInfo;
+    }
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Amount {
 
@@ -134,10 +233,23 @@ public class WxCreateOrderRequest {
          */
         private String currency;
 
+        public int getTotal() {
+            return total;
+        }
+
+        public void setTotal(int total) {
+            this.total = total;
+        }
+
+        public String getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(String currency) {
+            this.currency = currency;
+        }
     }
 
-    @Data
-    @Builder
     public static class Payer {
 
         /**
@@ -149,10 +261,15 @@ public class WxCreateOrderRequest {
          */
         private String openid;
 
+        public String getOpenid() {
+            return openid;
+        }
+
+        public void setOpenid(String openid) {
+            this.openid = openid;
+        }
     }
 
-    @Data
-    @Builder
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Detail {
 
@@ -178,8 +295,30 @@ public class WxCreateOrderRequest {
         @JsonProperty("goods_detail")
         private List<GoodsDetail> goodsDetail;
 
+        public String getInvoiceId() {
+            return invoiceId;
+        }
 
-        @Data
+        public void setInvoiceId(String invoiceId) {
+            this.invoiceId = invoiceId;
+        }
+
+        public Integer getCostPrice() {
+            return costPrice;
+        }
+
+        public void setCostPrice(Integer costPrice) {
+            this.costPrice = costPrice;
+        }
+
+        public List<GoodsDetail> getGoodsDetail() {
+            return goodsDetail;
+        }
+
+        public void setGoodsDetail(List<GoodsDetail> goodsDetail) {
+            this.goodsDetail = goodsDetail;
+        }
+
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public static class GoodsDetail {
 
@@ -215,11 +354,48 @@ public class WxCreateOrderRequest {
             @JsonProperty("unit_price")
             private int unitPrice;
 
+            public String getGoodsName() {
+                return goodsName;
+            }
+
+            public void setGoodsName(String goodsName) {
+                this.goodsName = goodsName;
+            }
+
+            public String getWechatpayGoodsId() {
+                return wechatpayGoodsId;
+            }
+
+            public void setWechatpayGoodsId(String wechatpayGoodsId) {
+                this.wechatpayGoodsId = wechatpayGoodsId;
+            }
+
+            public int getQuantity() {
+                return quantity;
+            }
+
+            public void setQuantity(int quantity) {
+                this.quantity = quantity;
+            }
+
+            public String getMerchantGoodsId() {
+                return merchantGoodsId;
+            }
+
+            public void setMerchantGoodsId(String merchantGoodsId) {
+                this.merchantGoodsId = merchantGoodsId;
+            }
+
+            public int getUnitPrice() {
+                return unitPrice;
+            }
+
+            public void setUnitPrice(int unitPrice) {
+                this.unitPrice = unitPrice;
+            }
         }
     }
 
-    @Data
-    @Builder
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class SceneInfo {
 
@@ -246,7 +422,30 @@ public class WxCreateOrderRequest {
         @JsonProperty("payer_client_ip")
         private String payerClientIp;
 
-        @Data
+        public StoreInfo getStoreInfo() {
+            return storeInfo;
+        }
+
+        public void setStoreInfo(StoreInfo storeInfo) {
+            this.storeInfo = storeInfo;
+        }
+
+        public String getDeviceId() {
+            return deviceId;
+        }
+
+        public void setDeviceId(String deviceId) {
+            this.deviceId = deviceId;
+        }
+
+        public String getPayerClientIp() {
+            return payerClientIp;
+        }
+
+        public void setPayerClientIp(String payerClientIp) {
+            this.payerClientIp = payerClientIp;
+        }
+
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public static class StoreInfo {
 
@@ -276,6 +475,37 @@ public class WxCreateOrderRequest {
              */
             private String id;
 
+            public String getAddress() {
+                return address;
+            }
+
+            public void setAddress(String address) {
+                this.address = address;
+            }
+
+            public String getAreaCode() {
+                return areaCode;
+            }
+
+            public void setAreaCode(String areaCode) {
+                this.areaCode = areaCode;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public String getId() {
+                return id;
+            }
+
+            public void setId(String id) {
+                this.id = id;
+            }
         }
     }
 

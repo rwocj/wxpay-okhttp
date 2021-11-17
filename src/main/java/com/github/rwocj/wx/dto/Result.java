@@ -1,21 +1,21 @@
 package com.github.rwocj.wx.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Value;
-
 /**
  * 返回给微信的信息
  */
-@Value
-@AllArgsConstructor
 public class Result {
 
     static final Result OK = new Result("SUCCESS", null);
     static final Result FAIL = new Result("fail", null);
 
-    String code;
+    private final String code;
 
-    String message;
+    private final String message;
+
+    public Result(String code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
     public static Result ok() {
         return OK;

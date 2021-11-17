@@ -2,14 +2,12 @@ package com.github.rwocj.wx.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 
 import java.util.List;
 
 /**
  * 微信退款结果
  */
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WxRefundRes {
 
@@ -47,7 +45,46 @@ public class WxRefundRes {
     @JsonProperty("promotion_detail")
     private List<PromotionDetail> promotionDetail;
 
-    @Data
+    public String getRefundId() {
+        return refundId;
+    }
+
+    public void setRefundId(String refundId) {
+        this.refundId = refundId;
+    }
+
+    public String getOutRefundNo() {
+        return outRefundNo;
+    }
+
+    public void setOutRefundNo(String outRefundNo) {
+        this.outRefundNo = outRefundNo;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public Amount getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Amount amount) {
+        this.amount = amount;
+    }
+
+    public List<PromotionDetail> getPromotionDetail() {
+        return promotionDetail;
+    }
+
+    public void setPromotionDetail(List<PromotionDetail> promotionDetail) {
+        this.promotionDetail = promotionDetail;
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Amount {
         /**
@@ -75,9 +112,39 @@ public class WxRefundRes {
         @JsonProperty("currency")
         private String currency;
 
+        public int getRefund() {
+            return refund;
+        }
+
+        public void setRefund(int refund) {
+            this.refund = refund;
+        }
+
+        public int getPayerRefund() {
+            return payerRefund;
+        }
+
+        public void setPayerRefund(int payerRefund) {
+            this.payerRefund = payerRefund;
+        }
+
+        public Integer getDiscountRefund() {
+            return discountRefund;
+        }
+
+        public void setDiscountRefund(Integer discountRefund) {
+            this.discountRefund = discountRefund;
+        }
+
+        public String getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(String currency) {
+            this.currency = currency;
+        }
     }
 
-    @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PromotionDetail {
         /**
@@ -120,5 +187,44 @@ public class WxRefundRes {
         @JsonProperty("refund_amount")
         private int refundAmount;
 
+        public String getPromotionId() {
+            return promotionId;
+        }
+
+        public void setPromotionId(String promotionId) {
+            this.promotionId = promotionId;
+        }
+
+        public String getScope() {
+            return scope;
+        }
+
+        public void setScope(String scope) {
+            this.scope = scope;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public int getAmount() {
+            return amount;
+        }
+
+        public void setAmount(int amount) {
+            this.amount = amount;
+        }
+
+        public int getRefundAmount() {
+            return refundAmount;
+        }
+
+        public void setRefundAmount(int refundAmount) {
+            this.refundAmount = refundAmount;
+        }
     }
 }

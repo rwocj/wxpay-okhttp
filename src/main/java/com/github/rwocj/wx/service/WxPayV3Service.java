@@ -10,9 +10,9 @@ import com.github.rwocj.wx.enums.OrderType;
 import com.github.rwocj.wx.properties.WxProperties;
 import com.github.rwocj.wx.util.AesUtil;
 import com.github.rwocj.wx.util.SignUtil;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,8 +22,9 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 public class WxPayV3Service {
+
+    private final static Logger log = LoggerFactory.getLogger(WxPayV3Service.class);
 
     /**
      * 普通商户下单url
@@ -64,7 +65,6 @@ public class WxPayV3Service {
      * @return 预下单id, prepay_id
      * @throws WxPayException 下单失败
      */
-    @SneakyThrows(JsonProcessingException.class)
     public String createOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
         if (createOrderRequest.getAppid() == null) {
             createOrderRequest.setAppid(wxProperties.getAppId());
@@ -79,7 +79,11 @@ public class WxPayV3Service {
         OrderType orderType = createOrderRequest.getOrderType();
         String url = ORDER_URL + orderType.getUrl();
         String res = post(url, createOrderRequest);
-        return objectMapper.readTree(res).get("prepay_id").asText();
+        try {
+            return objectMapper.readTree(res).get("prepay_id").asText();
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
@@ -90,7 +94,6 @@ public class WxPayV3Service {
      * @return 退款结果
      * @throws WxPayException 退款失败
      */
-    @SneakyThrows(JsonProcessingException.class)
     public WxRefundRes refund(WxRefundRequest refundRequest) throws WxPayException {
         if (refundRequest.getSpAppid() == null) {
             refundRequest.setSpAppid(wxProperties.getAppId());
@@ -100,7 +103,11 @@ public class WxPayV3Service {
         }
 
         String res = post(REFUND_URL, refundRequest);
-        return objectMapper.readValue(res, WxRefundRes.class);
+        try {
+            return objectMapper.readValue(res, WxRefundRes.class);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
@@ -173,10 +180,13 @@ public class WxPayV3Service {
         return queryOrder("https://api.mch.weixin.qq.com/v3/pay/transactions/out-trade-no/" + outTradeId + "?mchid=" + wxProperties.getPay().getMchId());
     }
 
-    @SneakyThrows(JsonProcessingException.class)
     private WxPayResult queryOrder(String url) throws WxPayException {
         String result = get(url);
-        return objectMapper.readValue(result, WxPayResult.class);
+        try {
+            return objectMapper.readValue(result, WxPayResult.class);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
@@ -208,9 +218,13 @@ public class WxPayV3Service {
     }
 
 
-    @SneakyThrows(JsonProcessingException.class)
     public String post(String url, Object requestObject) throws WxPayException {
-        String content = objectMapper.writeValueAsString(requestObject);
+        String content = null;
+        try {
+            content = objectMapper.writeValueAsString(requestObject);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(e);
+        }
         Request request = new Request.Builder()
                 .url(url)
                 .post(RequestBody.create(MediaType.parse("application/json;charset=utf-8"),

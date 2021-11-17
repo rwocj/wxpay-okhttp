@@ -5,14 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.rwocj.wx.enums.TradeState;
 import com.github.rwocj.wx.enums.TradeType;
-import lombok.Data;
 
 import java.util.List;
 
 /**
  * 对应微信通知的支付结果
  */
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WxPayResult {
@@ -92,10 +90,121 @@ public class WxPayResult {
     @JsonProperty("promotion_detail")
     private List<PromotionDetail> promotionDetail;
 
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public Amount getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Amount amount) {
+        this.amount = amount;
+    }
+
+    public String getMchid() {
+        return mchid;
+    }
+
+    public void setMchid(String mchid) {
+        this.mchid = mchid;
+    }
+
+    public TradeState getTradeState() {
+        return tradeState;
+    }
+
+    public void setTradeState(TradeState tradeState) {
+        this.tradeState = tradeState;
+    }
+
+    public String getTradeStateDesc() {
+        return tradeStateDesc;
+    }
+
+    public void setTradeStateDesc(String tradeStateDesc) {
+        this.tradeStateDesc = tradeStateDesc;
+    }
+
+    public String getBankType() {
+        return bankType;
+    }
+
+    public void setBankType(String bankType) {
+        this.bankType = bankType;
+    }
+
+    public String getSuccessTime() {
+        return successTime;
+    }
+
+    public void setSuccessTime(String successTime) {
+        this.successTime = successTime;
+    }
+
+    public Payer getPayer() {
+        return payer;
+    }
+
+    public void setPayer(Payer payer) {
+        this.payer = payer;
+    }
+
+    public String getOutTradeNo() {
+        return outTradeNo;
+    }
+
+    public void setOutTradeNo(String outTradeNo) {
+        this.outTradeNo = outTradeNo;
+    }
+
+    public String getAppid() {
+        return appid;
+    }
+
+    public void setAppid(String appid) {
+        this.appid = appid;
+    }
+
+    public TradeType getTradeType() {
+        return tradeType;
+    }
+
+    public void setTradeType(TradeType tradeType) {
+        this.tradeType = tradeType;
+    }
+
+    public String getAttach() {
+        return attach;
+    }
+
+    public void setAttach(String attach) {
+        this.attach = attach;
+    }
+
+    public SceneInfo getSceneInfo() {
+        return sceneInfo;
+    }
+
+    public void setSceneInfo(SceneInfo sceneInfo) {
+        this.sceneInfo = sceneInfo;
+    }
+
+    public List<PromotionDetail> getPromotionDetail() {
+        return promotionDetail;
+    }
+
+    public void setPromotionDetail(List<PromotionDetail> promotionDetail) {
+        this.promotionDetail = promotionDetail;
+    }
+
     /**
      * 订单金额
      */
-    @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Amount {
         /**
@@ -119,12 +228,42 @@ public class WxPayResult {
         @JsonProperty("payer_currency")
         private String payerCurrency;
 
+        public int getPayerTotal() {
+            return payerTotal;
+        }
+
+        public void setPayerTotal(int payerTotal) {
+            this.payerTotal = payerTotal;
+        }
+
+        public int getTotal() {
+            return total;
+        }
+
+        public void setTotal(int total) {
+            this.total = total;
+        }
+
+        public String getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(String currency) {
+            this.currency = currency;
+        }
+
+        public String getPayerCurrency() {
+            return payerCurrency;
+        }
+
+        public void setPayerCurrency(String payerCurrency) {
+            this.payerCurrency = payerCurrency;
+        }
     }
 
     /**
      * 支付者信息
      */
-    @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Payer {
         /**
@@ -133,12 +272,18 @@ public class WxPayResult {
         @JsonProperty(value = "openid", required = true)
         private String openid;
 
+        public String getOpenid() {
+            return openid;
+        }
+
+        public void setOpenid(String openid) {
+            this.openid = openid;
+        }
     }
 
     /**
      * 场景信息
      */
-    @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class SceneInfo {
         /**
@@ -147,12 +292,18 @@ public class WxPayResult {
         @JsonProperty("device_id")
         private String deviceId;
 
+        public String getDeviceId() {
+            return deviceId;
+        }
+
+        public void setDeviceId(String deviceId) {
+            this.deviceId = deviceId;
+        }
     }
 
     /**
      * 优惠详情
      */
-    @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PromotionDetail {
         /**
@@ -216,10 +367,97 @@ public class WxPayResult {
         @JsonProperty("goods_detail")
         private List<GoodsDetail> goodsDetail;
 
+        public int getAmount() {
+            return amount;
+        }
+
+        public void setAmount(int amount) {
+            this.amount = amount;
+        }
+
+        public int getWechatpayContribute() {
+            return wechatpayContribute;
+        }
+
+        public void setWechatpayContribute(int wechatpayContribute) {
+            this.wechatpayContribute = wechatpayContribute;
+        }
+
+        public String getCouponId() {
+            return couponId;
+        }
+
+        public void setCouponId(String couponId) {
+            this.couponId = couponId;
+        }
+
+        public String getScope() {
+            return scope;
+        }
+
+        public void setScope(String scope) {
+            this.scope = scope;
+        }
+
+        public int getMerchantContribute() {
+            return merchantContribute;
+        }
+
+        public void setMerchantContribute(int merchantContribute) {
+            this.merchantContribute = merchantContribute;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getOtherContribute() {
+            return otherContribute;
+        }
+
+        public void setOtherContribute(int otherContribute) {
+            this.otherContribute = otherContribute;
+        }
+
+        public String getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(String currency) {
+            this.currency = currency;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getStockId() {
+            return stockId;
+        }
+
+        public void setStockId(String stockId) {
+            this.stockId = stockId;
+        }
+
+        public List<GoodsDetail> getGoodsDetail() {
+            return goodsDetail;
+        }
+
+        public void setGoodsDetail(List<GoodsDetail> goodsDetail) {
+            this.goodsDetail = goodsDetail;
+        }
+
         /**
          * 单品列表
          */
-        @Data
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class GoodsDetail {
             /**
@@ -248,6 +486,45 @@ public class WxPayResult {
             @JsonProperty(value = "unit_price", required = true)
             private int unitPrice;
 
+            public String getGoodsRemark() {
+                return goodsRemark;
+            }
+
+            public void setGoodsRemark(String goodsRemark) {
+                this.goodsRemark = goodsRemark;
+            }
+
+            public int getQuantity() {
+                return quantity;
+            }
+
+            public void setQuantity(int quantity) {
+                this.quantity = quantity;
+            }
+
+            public int getDiscountAmount() {
+                return discountAmount;
+            }
+
+            public void setDiscountAmount(int discountAmount) {
+                this.discountAmount = discountAmount;
+            }
+
+            public String getGoodsId() {
+                return goodsId;
+            }
+
+            public void setGoodsId(String goodsId) {
+                this.goodsId = goodsId;
+            }
+
+            public int getUnitPrice() {
+                return unitPrice;
+            }
+
+            public void setUnitPrice(int unitPrice) {
+                this.unitPrice = unitPrice;
+            }
         }
     }
 }

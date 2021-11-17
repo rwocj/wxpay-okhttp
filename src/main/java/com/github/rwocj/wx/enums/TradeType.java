@@ -1,10 +1,5 @@
 package com.github.rwocj.wx.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public enum TradeType {
 
     JSAPI("公众号支付"),
@@ -15,4 +10,12 @@ public enum TradeType {
     FACEPAY("刷脸支付");
 
     private final String value;
+
+    TradeType(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

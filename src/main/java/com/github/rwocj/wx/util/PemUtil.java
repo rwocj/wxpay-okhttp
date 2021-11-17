@@ -1,7 +1,5 @@
 package com.github.rwocj.wx.util;
 
-import lombok.experimental.UtilityClass;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,8 +11,11 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
-@UtilityClass
 public class PemUtil {
+
+    private PemUtil() {
+
+    }
 
     public static PrivateKey loadPrivateKey(InputStream inputStream) {
         try {
@@ -26,13 +27,13 @@ public class PemUtil {
             }
 
             String privateKey = array.toString("utf-8")
-                .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replace("-----END PRIVATE KEY-----", "")
-                .replaceAll("\\s+", "");
+                    .replace("-----BEGIN PRIVATE KEY-----", "")
+                    .replace("-----END PRIVATE KEY-----", "")
+                    .replaceAll("\\s+", "");
 
             KeyFactory kf = KeyFactory.getInstance("RSA");
             return kf.generatePrivate(
-                new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKey)));
+                    new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKey)));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("当前Java环境不支持RSA", e);
         } catch (InvalidKeySpecException e) {

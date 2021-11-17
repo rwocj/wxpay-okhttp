@@ -3,14 +3,11 @@ package com.github.rwocj.wx.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Data;
 
 
 /**
  * 微信退款请求体
  */
-@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WxRefundRequest {
@@ -75,8 +72,78 @@ public class WxRefundRequest {
     @JsonProperty("notify_url")
     private String notifyUrl;
 
-    @Data
-    @Builder
+    public String getSubMchid() {
+        return subMchid;
+    }
+
+    public void setSubMchid(String subMchid) {
+        this.subMchid = subMchid;
+    }
+
+    public String getSpAppid() {
+        return spAppid;
+    }
+
+    public void setSpAppid(String spAppid) {
+        this.spAppid = spAppid;
+    }
+
+    public String getSubAppid() {
+        return subAppid;
+    }
+
+    public void setSubAppid(String subAppid) {
+        this.subAppid = subAppid;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public String getOutTradeNo() {
+        return outTradeNo;
+    }
+
+    public void setOutTradeNo(String outTradeNo) {
+        this.outTradeNo = outTradeNo;
+    }
+
+    public String getOutRefundNo() {
+        return outRefundNo;
+    }
+
+    public void setOutRefundNo(String outRefundNo) {
+        this.outRefundNo = outRefundNo;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public Amount getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Amount amount) {
+        this.amount = amount;
+    }
+
+    public String getNotifyUrl() {
+        return notifyUrl;
+    }
+
+    public void setNotifyUrl(String notifyUrl) {
+        this.notifyUrl = notifyUrl;
+    }
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Amount {
@@ -102,5 +169,28 @@ public class WxRefundRequest {
         @JsonProperty("currency")
         private String currency;
 
+        public int getRefund() {
+            return refund;
+        }
+
+        public void setRefund(int refund) {
+            this.refund = refund;
+        }
+
+        public int getTotal() {
+            return total;
+        }
+
+        public void setTotal(int total) {
+            this.total = total;
+        }
+
+        public String getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(String currency) {
+            this.currency = currency;
+        }
     }
 }

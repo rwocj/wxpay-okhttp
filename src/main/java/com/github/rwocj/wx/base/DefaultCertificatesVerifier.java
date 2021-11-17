@@ -1,12 +1,12 @@
 package com.github.rwocj.wx.base;
 
 import com.github.rwocj.wx.util.WxPayUtil;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -19,8 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-@Slf4j
 public class DefaultCertificatesVerifier implements Verifier {
+
+    private final static Logger log = LoggerFactory.getLogger(DefaultCertificatesVerifier.class);
 
     private final HashMap<BigInteger, X509Certificate> certificates = new HashMap<>();
 
@@ -31,7 +32,6 @@ public class DefaultCertificatesVerifier implements Verifier {
     private volatile Instant instant;
 
     //证书更新间隔时间，单位为分钟
-    @Setter
     private int minutesInterval = TimeInterval.TwelveHours.minutes;
 
     private final byte[] apiV3Key;
@@ -65,6 +65,10 @@ public class DefaultCertificatesVerifier implements Verifier {
         return certificates.containsKey(val) && verify(certificates.get(val), message, signature);
     }
 
+    public void setMinutesInterval(int minutesInterval) {
+        this.minutesInterval = minutesInterval;
+    }
+
     private boolean verify(X509Certificate certificate, byte[] message, String signature) {
         try {
             Signature sign = Signature.getInstance("SHA256withRSA");
@@ -93,7 +97,7 @@ public class DefaultCertificatesVerifier implements Verifier {
                 }
             }
         } else {
-            log.error("下载证书失败：{}", body.toString());
+            log.error("下载证书失败：{}", body);
         }
 
         execute.close();

@@ -1,16 +1,18 @@
 package com.github.rwocj.wx.base;
 
-import lombok.AllArgsConstructor;
 import okhttp3.HttpUrl;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
 
-@AllArgsConstructor
 public class DefaultV3Credentials implements Credentials {
 
     private final Sign sign;
+
+    public DefaultV3Credentials(Sign sign) {
+        this.sign = sign;
+    }
 
     @Override
     public String getToken(String method, String url, String body, String machId, String certificateSerialNo) {

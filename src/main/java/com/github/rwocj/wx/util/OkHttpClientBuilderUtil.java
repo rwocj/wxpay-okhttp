@@ -1,13 +1,15 @@
 package com.github.rwocj.wx.util;
 
-import lombok.experimental.UtilityClass;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
 
-@UtilityClass
 public class OkHttpClientBuilderUtil {
+
+    private OkHttpClientBuilderUtil() {
+
+    }
 
     public static OkHttpClient.Builder wxPayOkHttpClient(Interceptor interceptor) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();

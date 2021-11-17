@@ -1,10 +1,5 @@
 package com.github.rwocj.wx.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public enum TradeState {
 
     SUCCESS("支付成功"),
@@ -16,4 +11,12 @@ public enum TradeState {
     PAYERROR("支付失败(其他原因，如银行返回失败)");
 
     private final String value;
+
+    TradeState(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

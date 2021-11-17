@@ -2,7 +2,6 @@ package com.github.rwocj.wx.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.experimental.UtilityClass;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,9 +14,11 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-@UtilityClass
 public class WxPayUtil {
 
+    private WxPayUtil() {
+
+    }
 
     /**
      * 反序列化证书并解密

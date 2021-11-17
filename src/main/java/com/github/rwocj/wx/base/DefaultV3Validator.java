@@ -1,14 +1,17 @@
 package com.github.rwocj.wx.base;
 
-import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.time.DateTimeException;
 import java.time.Duration;
 import java.time.Instant;
 
-@Slf4j
 public class DefaultV3Validator implements Validator {
+
+    private final static Logger log = LoggerFactory.getLogger(DefaultV3Validator.class);
 
     private final Verifier verifier;
 
@@ -37,8 +40,8 @@ public class DefaultV3Validator implements Validator {
 
             if (!verifier.verify(serial, message.getBytes(StandardCharsets.UTF_8), signature)) {
                 throw verifyFail("serial=[%s] message=[%s] sign=[%s], request-id=[%s]",
-                    serial, message, signature,
-                    wxHeaders.getRequestID());
+                        serial, message, signature,
+                        wxHeaders.getRequestID());
             }
         } catch (IllegalArgumentException e) {
             log.warn(e.getMessage());
@@ -70,11 +73,11 @@ public class DefaultV3Validator implements Validator {
                 // 拒绝5分钟之外的应答
                 if (Duration.between(instant, Instant.now()).abs().toMinutes() >= 5) {
                     throw parameterError("timestamp=[%s] expires, request-id=[%s]",
-                        timestamp, requestId);
+                            timestamp, requestId);
                 }
             } catch (DateTimeException | NumberFormatException e) {
                 throw parameterError("invalid timestamp=[%s], request-id=[%s]",
-                    timestamp, requestId);
+                        timestamp, requestId);
             }
         }
     }
@@ -84,8 +87,8 @@ public class DefaultV3Validator implements Validator {
         String nonce = wxHeaders.getWechatpayNonce();
 
         return timestamp + "\n"
-            + nonce + "\n"
-            + responseStr + "\n";
+                + nonce + "\n"
+                + responseStr + "\n";
     }
 
 

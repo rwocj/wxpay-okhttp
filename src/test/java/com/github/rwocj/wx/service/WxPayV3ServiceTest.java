@@ -35,8 +35,12 @@ class WxPayV3ServiceTest {
         request.setOrderType(OrderType.jsapi);
         request.setDescription("测试商品");
         request.setOutTradeNo(UUID.randomUUID().toString().replaceAll("-", ""));
-        request.setAmount(WxCreateOrderRequest.Amount.builder().total(10).build());
-        request.setPayer(WxCreateOrderRequest.Payer.builder().openid("oT5Pk5GxcjYfGQ-MCLi0QRp45Quc").build());
+        WxCreateOrderRequest.Amount amount = new WxCreateOrderRequest.Amount();
+        amount.setTotal(10);
+        request.setAmount(amount);
+        WxCreateOrderRequest.Payer payer = new WxCreateOrderRequest.Payer();
+        payer.setOpenid("oT5Pk5GxcjYfGQ-MCLi0QRp45Quc");
+        request.setPayer(payer);
         String prepay_id = wxPayV3Service.createOrder(request);
         System.out.println("prepay_id:" + prepay_id);
         Assertions.assertNotNull(prepay_id);
@@ -48,7 +52,10 @@ class WxPayV3ServiceTest {
     void refund() throws WxPayException {
         WxRefundRequest refundRequest = new WxRefundRequest();
         refundRequest.setNotifyUrl(wxProperties.getPay().getRefundNotifyUrl());
-        refundRequest.setAmount(WxRefundRequest.Amount.builder().refund(1).total(1).build());
+        WxRefundRequest.Amount amount = new WxRefundRequest.Amount();
+        amount.setTotal(1);
+        amount.setRefund(1);
+        refundRequest.setAmount(amount);
         refundRequest.setOutRefundNo(UUID.randomUUID().toString());
         wxPayV3Service.refund(refundRequest);
     }

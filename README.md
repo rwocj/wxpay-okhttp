@@ -7,7 +7,13 @@
 #### 使用方法
 
 * 1、pom引入组件
-
+```xml
+<dependency>
+    <groupId>com.github.rwocj</groupId>
+    <artifactId>wxpay-v3-spring-boot-starter</artifactId>
+    <version>0.5</version>
+</dependency>
+```
 * 2、配置必要属性
     * wx.app-id=appid
     * wx.pay.mchId=商户id

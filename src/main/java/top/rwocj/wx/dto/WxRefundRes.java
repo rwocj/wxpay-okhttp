@@ -112,6 +112,12 @@ public class WxRefundRes {
         @JsonProperty("currency")
         private String currency;
 
+        /**
+         * 手续费退款金额，单位为分。
+         */
+        @JsonProperty("refund_fee")
+        private Integer refundFee;
+
         public int getRefund() {
             return refund;
         }
@@ -142,6 +148,14 @@ public class WxRefundRes {
 
         public void setCurrency(String currency) {
             this.currency = currency;
+        }
+
+        public Integer getRefundFee() {
+            return refundFee;
+        }
+
+        public void setRefundFee(Integer refundFee) {
+            this.refundFee = refundFee;
         }
     }
 

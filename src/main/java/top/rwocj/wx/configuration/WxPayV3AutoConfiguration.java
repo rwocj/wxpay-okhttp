@@ -1,6 +1,7 @@
 package top.rwocj.wx.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -17,6 +18,7 @@ import top.rwocj.wx.util.PemUtil;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
+import java.util.stream.Collectors;
 
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureAfter(JacksonAutoConfiguration.class)
@@ -57,20 +59,27 @@ public class WxPayV3AutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public Validator wxPayValidator(WxPayV3OkHttpInterceptor wxPayV3OkHttpInterceptor, WxProperties wxProperties) {
+    public OkHttpClient okHttpClient(WxPayV3OkHttpInterceptor wxPayV3OkHttpInterceptor,
+                                     ObjectProvider<OkHttpClientCustomizer> okHttpClientCustomizerObjectProvider) {
+        return OkHttpClientBuilderUtil.wxPayOkHttpClient(
+                wxPayV3OkHttpInterceptor,
+                okHttpClientCustomizerObjectProvider.orderedStream().collect(Collectors.toList())).build();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public Validator wxPayValidator(OkHttpClient okHttpClient, WxProperties wxProperties) {
         DefaultCertificatesVerifier defaultCertificatesVerifier
-                = new DefaultCertificatesVerifier(wxProperties.getPay().getApiV3Key().getBytes(StandardCharsets.UTF_8),
-                OkHttpClientBuilderUtil.wxPayOkHttpClient(wxPayV3OkHttpInterceptor).build());
+                = new DefaultCertificatesVerifier(wxProperties.getPay().getApiV3Key().getBytes(StandardCharsets.UTF_8), okHttpClient);
         return new DefaultV3Validator(defaultCertificatesVerifier);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public WxPayV3Service wxPayV3Service(WxPayV3OkHttpInterceptor wxPayV3OkHttpInterceptor,
+    public WxPayV3Service wxPayV3Service(OkHttpClient okHttpClient,
                                          Validator validator,
                                          Sign sign, WxProperties wxProperties) {
-        return new WxPayV3Service(OkHttpClientBuilderUtil.wxPayOkHttpClient(wxPayV3OkHttpInterceptor).build(),
-                objectMapper, validator, wxProperties, sign);
+        return new WxPayV3Service(okHttpClient, objectMapper, validator, wxProperties, sign);
     }
 
 

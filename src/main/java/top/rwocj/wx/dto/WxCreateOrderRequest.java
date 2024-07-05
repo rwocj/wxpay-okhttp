@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * app/native/h5/jsapi下单请求体
- * https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/pay/transactions/chapter3_2.shtml
+ * <a href="https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/pay/transactions/chapter3_2.shtml">...</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WxCreateOrderRequest {

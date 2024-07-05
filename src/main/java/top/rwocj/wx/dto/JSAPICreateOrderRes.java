@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * jsapi下单响应体
- * https://developers.weixin.qq.com/miniprogram/dev/api/open-api/payment/wx.requestPayment.html
- * https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/pay/transactions/chapter3_8.shtml
+ * <a href="https://developers.weixin.qq.com/miniprogram/dev/api/open-api/payment/wx.requestPayment.html">...</a>
+ * <a href="https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/pay/transactions/chapter3_8.shtml">...</a>
  */
 public class JSAPICreateOrderRes {
 

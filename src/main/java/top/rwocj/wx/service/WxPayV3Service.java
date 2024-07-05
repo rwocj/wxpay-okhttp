@@ -59,7 +59,10 @@ public class WxPayV3Service {
     }
 
     /**
-     * 普通商户原生下单，得到prepay_id,适用app/h5/jsapi/navtive
+     * 普通商户原生下单，得到prepay_id或地址等,适用app/h5/jsapi/native
+     * app/jsapi：返回prepay_id
+     * h5: 返回h5_url
+     * native: 返回code_url
      *
      * @param createOrderRequest 下单请求体
      * @return 预下单id, prepay_id
@@ -75,12 +78,12 @@ public class WxPayV3Service {
         if (createOrderRequest.getNotifyUrl() == null) {
             createOrderRequest.setNotifyUrl(wxProperties.getPay().getNotifyUrl());
         }
-
         OrderType orderType = createOrderRequest.getOrderType();
         String url = ORDER_URL + orderType.getUrl();
         String res = post(url, createOrderRequest);
         try {
-            return objectMapper.readTree(res).get("prepay_id").asText();
+            JsonNode jsonNode = objectMapper.readTree(res);
+            return orderType.resultFunc.apply(jsonNode);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException(e);
         }

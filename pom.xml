@@ -10,7 +10,7 @@
     </parent>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-v3-spring-boot-starter</artifactId>
-    <version>0.5</version>
+    <version>0.6-SNAPSHOT</version>
     <name>wx-pay-v3</name>
     <description>基于微信v3接口规则实现微信支付的starter</description>
 
@@ -34,7 +34,7 @@
     </developers>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     </properties>
 
@@ -75,6 +75,12 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -2,11 +2,11 @@ package top.rwocj.wx.core;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public class HttpServletRequestWxHeaders implements WxHeaders {
+public class HttpJakartaServletRequestWxHeaders implements WxHeaders {
 
     private final HttpServletRequest request;
 
-    public HttpServletRequestWxHeaders(HttpServletRequest request) {
+    public HttpJakartaServletRequestWxHeaders(HttpServletRequest request) {
         this.request = request;
     }
 

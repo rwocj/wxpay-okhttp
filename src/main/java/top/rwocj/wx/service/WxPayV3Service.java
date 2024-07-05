@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.servlet.http.HttpServletRequest;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,6 @@ import top.rwocj.wx.properties.WxProperties;
 import top.rwocj.wx.util.AesUtil;
 import top.rwocj.wx.util.SignUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -205,6 +205,15 @@ public class WxPayV3Service {
 
     public WxPayResult buildPayResult(HttpServletRequest request, String data) throws WxPayException {
         boolean b = validateWxRequest(new HttpServletRequestWxHeaders(request), data);
+        if (b) {
+            return buildPayResult(data);
+        } else {
+            throw new WxPayException("验签不能过，非微信支付团队的消息！");
+        }
+    }
+
+    public WxPayResult buildV3PayResult(jakarta.servlet.http.HttpServletRequest request, String data) throws WxPayException {
+        boolean b = validateWxRequest(new HttpJakartaServletRequestWxHeaders(request), data);
         if (b) {
             return buildPayResult(data);
         } else {

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 
 /**
  * 微信退款请求体
@@ -155,6 +157,20 @@ public class WxRefundRequest {
          */
         @JsonProperty("refund")
         private int refund;
+
+        /**
+         * 退款需要从指定账户出资时，传递此参数指定出资金额（币种的最小单位，只能为整数）。
+         * 同时指定多个账户出资退款的使用场景需要满足以下条件：
+         * 1、未开通退款支出分离产品功能；
+         * 2、订单属于分账订单，且分账处于待分账或分账中状态。
+         * 参数传递需要满足条件：
+         * 1、基本账户可用余额出资金额与基本账户不可用余额出资金额之和等于退款金额；
+         * 2、账户类型不能重复。
+         * 上述任一条件不满足将返回错误
+         */
+        @JsonProperty("from")
+        private List<FundingAccount> from;
+
         /**
          * 原订单金额
          *
@@ -192,5 +208,37 @@ public class WxRefundRequest {
         public void setCurrency(String currency) {
             this.currency = currency;
         }
+
+        public List<FundingAccount> getFrom() {
+            return from;
+        }
+
+        public void setFrom(List<FundingAccount> from) {
+            this.from = from;
+        }
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class FundingAccount {
+
+        /**
+         * 下面枚举值多选一。
+         * 枚举值：
+         * AVAILABLE : 可用余额
+         * UNAVAILABLE : 不可用余额
+         *
+         * @required
+         */
+        @JsonProperty("account")
+        private String account;
+
+        /**
+         * 对应账户出资金额
+         *
+         * @required
+         */
+        @JsonProperty("amount")
+        private Integer amount;
     }
 }

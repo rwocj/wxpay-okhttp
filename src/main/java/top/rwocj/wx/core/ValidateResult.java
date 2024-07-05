@@ -1,4 +1,4 @@
-package top.rwocj.wx.base;
+package top.rwocj.wx.core;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

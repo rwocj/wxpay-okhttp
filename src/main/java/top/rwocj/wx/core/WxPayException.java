@@ -1,4 +1,4 @@
-package top.rwocj.wx.base;
+package top.rwocj.wx.core;
 
 public class WxPayException extends Exception {
 

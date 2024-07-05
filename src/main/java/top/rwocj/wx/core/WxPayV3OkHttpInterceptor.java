@@ -1,4 +1,4 @@
-package top.rwocj.wx.base;
+package top.rwocj.wx.core;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;

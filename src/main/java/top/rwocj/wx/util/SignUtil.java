@@ -1,6 +1,6 @@
 package top.rwocj.wx.util;
 
-import top.rwocj.wx.base.Sign;
+import top.rwocj.wx.core.Sign;
 import top.rwocj.wx.dto.JSAPICreateOrderRes;
 
 import java.nio.charset.StandardCharsets;

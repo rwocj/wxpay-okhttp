@@ -1,4 +1,4 @@
-package top.rwocj.wx.base;
+package top.rwocj.wx.core;
 
 /**
  * 签名接口，因为不只一个地方用到，所以单独提取出来

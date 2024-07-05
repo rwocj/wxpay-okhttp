@@ -1,4 +1,4 @@
-package top.rwocj.wx.base;
+package top.rwocj.wx.core;
 
 /**
  * 验证微信发过来的响应体

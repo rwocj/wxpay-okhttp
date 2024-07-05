@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import top.rwocj.wx.base.*;
+import top.rwocj.wx.core.*;
 import top.rwocj.wx.properties.WxProperties;
 import top.rwocj.wx.service.WxPayV3Service;
 import top.rwocj.wx.util.OkHttpClientBuilderUtil;

@@ -1,4 +1,4 @@
-package top.rwocj.wx.base;
+package top.rwocj.wx.core;
 
 /**
  * 根据v3接口规则，获取请求求或响应体header相关信息

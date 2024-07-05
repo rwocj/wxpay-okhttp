@@ -8,7 +8,7 @@ import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import top.rwocj.wx.base.*;
+import top.rwocj.wx.core.*;
 import top.rwocj.wx.dto.*;
 import top.rwocj.wx.enums.OrderType;
 import top.rwocj.wx.properties.WxProperties;

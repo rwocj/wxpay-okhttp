@@ -1,4 +1,4 @@
-package top.rwocj.wx.base;
+package top.rwocj.wx.core;
 
 import javax.servlet.http.HttpServletRequest;
 

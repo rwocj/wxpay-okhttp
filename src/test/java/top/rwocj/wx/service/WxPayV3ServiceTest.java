@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import top.rwocj.wx.base.WxPayException;
+import top.rwocj.wx.core.WxPayException;
 import top.rwocj.wx.dto.WxCreateOrderRequest;
 import top.rwocj.wx.dto.WxPayResult;
 import top.rwocj.wx.dto.WxRefundRequest;

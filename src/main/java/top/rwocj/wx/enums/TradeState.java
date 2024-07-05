@@ -2,6 +2,7 @@ package top.rwocj.wx.enums;
 
 public enum TradeState {
 
+    ACCEPT("已接收，等待扣款"),
     SUCCESS("支付成功"),
     REFUND("转入退款"),
     NOTPAY("未支付"),

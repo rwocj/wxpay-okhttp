@@ -88,7 +88,7 @@ public class WxPayV3Service {
 
     /**
      * 电商平台微信退款
-     * https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/ecommerce/refunds/chapter3_1.shtml
+     * <a href="https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/ecommerce/refunds/chapter3_1.shtml">电商平台微信退款接入文档</a>
      *
      * @param refundRequest 退款请求体
      * @return 退款结果
@@ -112,7 +112,7 @@ public class WxPayV3Service {
 
     /**
      * jsapi下单，封装jsapi调用支付需要的参数
-     * https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/pay/transactions/chapter3_8.shtml
+     * <a href="https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/pay/transactions/chapter3_8.shtml">jsapi下单接入文档</a>
      *
      * @param createOrderRequest 下单请求体
      * @return 下单成功后JSAPI调用支付需要的数据
@@ -130,7 +130,7 @@ public class WxPayV3Service {
      * @return 支付结果
      * @throws WxPayException 处理支付结果失败，如非微信通知的支付结果
      */
-    public WxPayResult buildPayResult(String data) throws WxPayException {
+    protected WxPayResult buildPayResult(String data) throws WxPayException {
         try {
             JsonNode jsonNode = objectMapper.readTree(data);
             JsonNode resource = jsonNode.get("resource");
@@ -150,7 +150,7 @@ public class WxPayV3Service {
      */
     public void closeOrder(String outTradeId) throws WxPayException {
         Assert.notNull(outTradeId, "商户订单号不能为nll");
-        String url = "https://api.mch.weixin.qq.com/v3/pay/transactions/out-trade-no/" + outTradeId + "/close";
+        String url = ORDER_URL + "out-trade-no/" + outTradeId + "/close";
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("mchid", wxProperties.getPay().getMchId());
         post(url, objectNode);
@@ -165,7 +165,7 @@ public class WxPayV3Service {
      */
     public WxPayResult queryOrderByTransactionsId(String transactionsId) throws WxPayException {
         Assert.notNull(transactionsId, "微信订单号不能为nll");
-        return queryOrder("https://api.mch.weixin.qq.com/v3/pay/transactions/id/" + transactionsId + "?mchid=" + wxProperties.getPay().getMchId());
+        return queryOrder(ORDER_URL + "id/" + transactionsId + "?mchid=" + wxProperties.getPay().getMchId());
     }
 
     /**
@@ -177,7 +177,7 @@ public class WxPayV3Service {
      */
     public WxPayResult queryOrderByOutTradeId(String outTradeId) throws WxPayException {
         Assert.notNull(outTradeId, "商户订单号不能为nll");
-        return queryOrder("https://api.mch.weixin.qq.com/v3/pay/transactions/out-trade-no/" + outTradeId + "?mchid=" + wxProperties.getPay().getMchId());
+        return queryOrder(ORDER_URL + "/out-trade-no/" + outTradeId + "?mchid=" + wxProperties.getPay().getMchId());
     }
 
     private WxPayResult queryOrder(String url) throws WxPayException {
@@ -235,8 +235,7 @@ public class WxPayV3Service {
     }
 
     protected String request(Request request) throws WxPayException {
-        try {
-            Response execute = okHttpClient.newCall(request).execute();
+        try (Response execute = okHttpClient.newCall(request).execute()) {
             log.debug("微信响应码：{}", execute.code());
             ResponseBody body = execute.body();
             if (execute.isSuccessful()) {

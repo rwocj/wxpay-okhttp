@@ -69,9 +69,9 @@ public class WxPayV3AutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public Validator wxPayValidator(OkHttpClient okHttpClient, WxProperties wxProperties) {
-        DefaultCertificatesVerifier defaultCertificatesVerifier
-                = new DefaultCertificatesVerifier(wxProperties.getPay().getApiV3Key().getBytes(StandardCharsets.UTF_8), okHttpClient);
-        return new DefaultV3Validator(defaultCertificatesVerifier);
+        SignVerifier defaultCertificatesSignVerifier
+                = new DefaultCertificatesSignVerifier(wxProperties.getPay().getApiV3Key().getBytes(StandardCharsets.UTF_8), okHttpClient);
+        return new DefaultV3Validator(defaultCertificatesSignVerifier);
     }
 
     @Bean

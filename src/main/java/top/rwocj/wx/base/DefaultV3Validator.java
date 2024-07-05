@@ -13,10 +13,10 @@ public class DefaultV3Validator implements Validator {
 
     private final static Logger log = LoggerFactory.getLogger(DefaultV3Validator.class);
 
-    private final Verifier verifier;
+    private final SignVerifier signVerifier;
 
-    public DefaultV3Validator(Verifier verifier) {
-        this.verifier = verifier;
+    public DefaultV3Validator(SignVerifier signVerifier) {
+        this.signVerifier = signVerifier;
     }
 
     static IllegalArgumentException parameterError(String message, Object... args) {
@@ -38,7 +38,7 @@ public class DefaultV3Validator implements Validator {
             String serial = wxHeaders.getWechatpaySerial();
             String signature = wxHeaders.getWechatpaySignature();
 
-            if (!verifier.verify(serial, message.getBytes(StandardCharsets.UTF_8), signature)) {
+            if (!signVerifier.verify(serial, message.getBytes(StandardCharsets.UTF_8), signature)) {
                 throw verifyFail("serial=[%s] message=[%s] sign=[%s], request-id=[%s]",
                         serial, message, signature,
                         wxHeaders.getRequestID());

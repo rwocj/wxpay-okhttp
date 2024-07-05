@@ -19,9 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class DefaultCertificatesVerifier implements Verifier {
+public class DefaultCertificatesSignVerifier implements SignVerifier {
 
-    private final static Logger log = LoggerFactory.getLogger(DefaultCertificatesVerifier.class);
+    private final static Logger log = LoggerFactory.getLogger(DefaultCertificatesSignVerifier.class);
 
     private final HashMap<BigInteger, X509Certificate> certificates = new HashMap<>();
 
@@ -40,7 +40,7 @@ public class DefaultCertificatesVerifier implements Verifier {
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    public DefaultCertificatesVerifier(byte[] apiV3Key, OkHttpClient okHttpClient) {
+    public DefaultCertificatesSignVerifier(byte[] apiV3Key, OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
         this.apiV3Key = apiV3Key;
     }

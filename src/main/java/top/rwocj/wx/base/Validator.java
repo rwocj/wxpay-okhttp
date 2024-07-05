@@ -2,7 +2,7 @@ package top.rwocj.wx.base;
 
 /**
  * 验证微信发过来的响应体
- * https://wechatpay-api.gitbook.io/wechatpay-api-v3/qian-ming-zhi-nan-1/qian-ming-yan-zheng
+ * <a href="https://wechatpay-api.gitbook.io/wechatpay-api-v3/qian-ming-zhi-nan-1/qian-ming-yan-zheng">...</a>
  */
 public interface Validator {
 

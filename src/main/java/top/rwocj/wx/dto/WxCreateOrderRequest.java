@@ -79,6 +79,11 @@ public class WxCreateOrderRequest {
     @JsonProperty("goods_tag")
     private String goodsTag;
     /**
+     * 传入true时，支付成功消息和支付详情页将出现开票入口。需要在微信支付商户平台或微信公众平台开通电子发票功能，传此字段才可生效。
+     */
+    @JsonProperty("support_fapiao")
+    private Boolean supportFapiao;
+    /**
      * 公众号ID,如为null,会自动配置配置文件中设置的
      *
      * @required
@@ -215,6 +220,14 @@ public class WxCreateOrderRequest {
         this.sceneInfo = sceneInfo;
     }
 
+    public Boolean getSupportFapiao() {
+        return supportFapiao;
+    }
+
+    public void setSupportFapiao(Boolean supportFapiao) {
+        this.supportFapiao = supportFapiao;
+    }
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Amount {
 
@@ -232,6 +245,13 @@ public class WxCreateOrderRequest {
          * @mock CNY
          */
         private String currency;
+
+        public Amount(int total) {
+            this.total = total;
+        }
+
+        public Amount() {
+        }
 
         public int getTotal() {
             return total;
@@ -260,6 +280,13 @@ public class WxCreateOrderRequest {
          * @required
          */
         private String openid;
+
+        public Payer(String openid) {
+            this.openid = openid;
+        }
+
+        public Payer() {
+        }
 
         public String getOpenid() {
             return openid;

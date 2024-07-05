@@ -2,11 +2,12 @@ package top.rwocj.wx.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import top.rwocj.wx.base.*;
 import top.rwocj.wx.properties.WxProperties;
 import top.rwocj.wx.service.WxPayV3Service;
@@ -17,7 +18,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
+@AutoConfigureAfter(JacksonAutoConfiguration.class)
 public class WxPayV3AutoConfiguration {
 
     private final ObjectMapper objectMapper;
@@ -36,7 +38,7 @@ public class WxPayV3AutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public Sign wxPaySign(WxProperties wxProperties) throws IOException {
-        PrivateKey privateKey = PemUtil.loadPrivateKey(new ClassPathResource(wxProperties.getPay().getPrivateKeyPath().replace("classpath:", "")).getInputStream());
+        PrivateKey privateKey = PemUtil.loadPrivateKey(wxProperties.getPay().getPrivateKeyPath().getInputStream());
         return new DefaultV3Sign(privateKey);
     }
 

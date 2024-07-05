@@ -1,5 +1,7 @@
 package top.rwocj.wx.properties;
 
+import org.springframework.core.io.Resource;
+
 public class WxPayProperties {
     /**
      * 微信支付商户号
@@ -27,7 +29,7 @@ public class WxPayProperties {
      *
      * @required
      */
-    private String privateKeyPath;
+    private Resource privateKeyPath;
 
     /**
      * 支付通知地址
@@ -65,11 +67,11 @@ public class WxPayProperties {
         this.apiV3Key = apiV3Key;
     }
 
-    public String getPrivateKeyPath() {
+    public Resource getPrivateKeyPath() {
         return privateKeyPath;
     }
 
-    public void setPrivateKeyPath(String privateKeyPath) {
+    public void setPrivateKeyPath(Resource privateKeyPath) {
         this.privateKeyPath = privateKeyPath;
     }
 

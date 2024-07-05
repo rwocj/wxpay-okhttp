@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.github.rwocj.wx.configuration.WxPayV3AutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=top.rwocj.wx.configuration.WxPayV3AutoConfiguration

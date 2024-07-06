@@ -20,7 +20,7 @@
 ```
 
 * 2、配置必要属性
-    * wx.app-id=appid
+  * wx.pay.app-id=appid
     * wx.pay.mchId=商户id
     * wx.pay.certificate-serial-no=微信支付证书序列号
     * wx.pay.api-v3-key=v3密钥

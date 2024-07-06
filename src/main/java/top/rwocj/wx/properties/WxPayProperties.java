@@ -3,6 +3,14 @@ package top.rwocj.wx.properties;
 import org.springframework.core.io.Resource;
 
 public class WxPayProperties {
+
+    /**
+     * 微信公众应用appId
+     *
+     * @required
+     */
+    private String appId;
+
     /**
      * 微信支付商户号
      *
@@ -89,5 +97,13 @@ public class WxPayProperties {
 
     public void setRefundNotifyUrl(String refundNotifyUrl) {
         this.refundNotifyUrl = refundNotifyUrl;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
     }
 }

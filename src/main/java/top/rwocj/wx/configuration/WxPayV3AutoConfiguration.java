@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import top.rwocj.wx.core.*;
-import top.rwocj.wx.properties.WxProperties;
+import top.rwocj.wx.properties.WxPayProperties;
 import top.rwocj.wx.service.WxPayV3Service;
 import top.rwocj.wx.util.OkHttpClientBuilderUtil;
 import top.rwocj.wx.util.PemUtil;
@@ -33,14 +33,14 @@ public class WxPayV3AutoConfiguration {
     @Bean
     @ConfigurationProperties(prefix = "wx.pay")
     @ConditionalOnMissingBean
-    public WxProperties wxProperties() {
-        return new WxProperties();
+    public WxPayProperties wxPayProperties() {
+        return new WxPayProperties();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public Sign wxPaySign(WxProperties wxProperties) throws IOException {
-        PrivateKey privateKey = PemUtil.loadPrivateKey(wxProperties.getPay().getPrivateKeyPath().getInputStream());
+    public Sign wxPaySign(WxPayProperties wxPayProperties) throws IOException {
+        PrivateKey privateKey = PemUtil.loadPrivateKey(wxPayProperties.getPrivateKeyPath().getInputStream());
         return new DefaultV3Sign(privateKey);
     }
 
@@ -52,9 +52,9 @@ public class WxPayV3AutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public WxPayV3OkHttpInterceptor wxPayInterceptor(Credentials credentials, WxProperties wxProperties) {
-        return new WxPayV3OkHttpInterceptor(credentials, wxProperties.getPay().getMchId(),
-                wxProperties.getPay().getCertificateSerialNo());
+    public WxPayV3OkHttpInterceptor wxPayInterceptor(Credentials credentials, WxPayProperties wxPayProperties) {
+        return new WxPayV3OkHttpInterceptor(credentials, wxPayProperties.getMchId(),
+                wxPayProperties.getCertificateSerialNo());
     }
 
     @Bean
@@ -68,9 +68,9 @@ public class WxPayV3AutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public Validator wxPayValidator(OkHttpClient okHttpClient, WxProperties wxProperties) {
+    public Validator wxPayValidator(OkHttpClient okHttpClient, WxPayProperties wxPayProperties) {
         SignVerifier defaultCertificatesSignVerifier
-                = new DefaultCertificatesSignVerifier(wxProperties.getPay().getApiV3Key().getBytes(StandardCharsets.UTF_8), okHttpClient);
+                = new DefaultCertificatesSignVerifier(wxPayProperties.getApiV3Key().getBytes(StandardCharsets.UTF_8), okHttpClient);
         return new DefaultV3Validator(defaultCertificatesSignVerifier);
     }
 
@@ -78,8 +78,8 @@ public class WxPayV3AutoConfiguration {
     @ConditionalOnMissingBean
     public WxPayV3Service wxPayV3Service(OkHttpClient okHttpClient,
                                          Validator validator,
-                                         Sign sign, WxProperties wxProperties) {
-        return new WxPayV3Service(okHttpClient, objectMapper, validator, wxProperties, sign);
+                                         Sign sign, WxPayProperties wxPayProperties) {
+        return new WxPayV3Service(okHttpClient, objectMapper, validator, wxPayProperties, sign);
     }
 
 

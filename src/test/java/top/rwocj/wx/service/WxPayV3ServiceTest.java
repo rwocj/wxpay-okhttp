@@ -13,7 +13,7 @@ import top.rwocj.wx.dto.WxCreateOrderRequest;
 import top.rwocj.wx.dto.WxPayResult;
 import top.rwocj.wx.dto.WxRefundRequest;
 import top.rwocj.wx.enums.OrderType;
-import top.rwocj.wx.properties.WxProperties;
+import top.rwocj.wx.properties.WxPayProperties;
 
 import javax.annotation.Resource;
 import java.util.ResourceBundle;
@@ -27,7 +27,7 @@ class WxPayV3ServiceTest {
     private WxPayV3Service wxPayV3Service;
 
     @Resource
-    private WxProperties wxProperties;
+    private WxPayProperties wxPayProperties;
 
     @Test
     void nativeCreateOrder() throws WxPayException {
@@ -51,7 +51,7 @@ class WxPayV3ServiceTest {
     @Disabled
     void refund() throws WxPayException {
         WxRefundRequest refundRequest = new WxRefundRequest();
-        refundRequest.setNotifyUrl(wxProperties.getPay().getRefundNotifyUrl());
+        refundRequest.setNotifyUrl(wxPayProperties.getRefundNotifyUrl());
         WxRefundRequest.Amount amount = new WxRefundRequest.Amount();
         amount.setTotal(1);
         amount.setRefund(1);

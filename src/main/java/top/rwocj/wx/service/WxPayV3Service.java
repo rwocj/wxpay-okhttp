@@ -12,7 +12,7 @@ import org.springframework.util.Assert;
 import top.rwocj.wx.core.*;
 import top.rwocj.wx.dto.*;
 import top.rwocj.wx.enums.OrderType;
-import top.rwocj.wx.properties.WxProperties;
+import top.rwocj.wx.properties.WxPayProperties;
 import top.rwocj.wx.util.AesUtil;
 import top.rwocj.wx.util.SignUtil;
 
@@ -41,21 +41,21 @@ public class WxPayV3Service {
 
     protected final Validator validator;
 
-    protected final WxProperties wxProperties;
+    protected final WxPayProperties wxPayProperties;
 
     protected final Sign sign;
 
     protected final AesUtil aesUtil;
 
     public WxPayV3Service(OkHttpClient okHttpClient, ObjectMapper objectMapper,
-                          Validator validator, WxProperties wxProperties,
+                          Validator validator, WxPayProperties wxPayProperties,
                           Sign sign) {
         this.okHttpClient = okHttpClient;
         this.objectMapper = objectMapper;
         this.validator = validator;
-        this.wxProperties = wxProperties;
+        this.wxPayProperties = wxPayProperties;
         this.sign = sign;
-        this.aesUtil = new AesUtil(wxProperties.getPay().getApiV3Key().getBytes(StandardCharsets.UTF_8));
+        this.aesUtil = new AesUtil(wxPayProperties.getApiV3Key().getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -70,13 +70,13 @@ public class WxPayV3Service {
      */
     public String createOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
         if (createOrderRequest.getAppid() == null) {
-            createOrderRequest.setAppid(wxProperties.getAppId());
+            createOrderRequest.setAppid(wxPayProperties.getAppId());
         }
         if (createOrderRequest.getMchid() == null) {
-            createOrderRequest.setMchid(wxProperties.getPay().getMchId());
+            createOrderRequest.setMchid(wxPayProperties.getMchId());
         }
         if (createOrderRequest.getNotifyUrl() == null) {
-            createOrderRequest.setNotifyUrl(wxProperties.getPay().getNotifyUrl());
+            createOrderRequest.setNotifyUrl(wxPayProperties.getNotifyUrl());
         }
         OrderType orderType = createOrderRequest.getOrderType();
         String url = ORDER_URL + orderType.getUrl();
@@ -99,12 +99,11 @@ public class WxPayV3Service {
      */
     public WxRefundRes refund(WxRefundRequest refundRequest) throws WxPayException {
         if (refundRequest.getSpAppid() == null) {
-            refundRequest.setSpAppid(wxProperties.getAppId());
+            refundRequest.setSpAppid(wxPayProperties.getAppId());
         }
         if (refundRequest.getSubMchid() == null) {
-            refundRequest.setSubMchid(wxProperties.getPay().getMchId());
+            refundRequest.setSubMchid(wxPayProperties.getMchId());
         }
-
         String res = post(REFUND_URL, refundRequest);
         try {
             return objectMapper.readValue(res, WxRefundRes.class);
@@ -123,7 +122,7 @@ public class WxPayV3Service {
      */
     public JSAPICreateOrderRes createJSAPIOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
         createOrderRequest.setOrderType(OrderType.jsapi);
-        return SignUtil.sign(createOrder(createOrderRequest), wxProperties.getAppId(), sign);
+        return SignUtil.sign(createOrder(createOrderRequest), wxPayProperties.getAppId(), sign);
     }
 
     /**
@@ -155,7 +154,7 @@ public class WxPayV3Service {
         Assert.notNull(outTradeId, "商户订单号不能为nll");
         String url = ORDER_URL + "out-trade-no/" + outTradeId + "/close";
         ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put("mchid", wxProperties.getPay().getMchId());
+        objectNode.put("mchid", wxPayProperties.getMchId());
         post(url, objectNode);
     }
 
@@ -168,7 +167,7 @@ public class WxPayV3Service {
      */
     public WxPayResult queryOrderByTransactionsId(String transactionsId) throws WxPayException {
         Assert.notNull(transactionsId, "微信订单号不能为nll");
-        return queryOrder(ORDER_URL + "id/" + transactionsId + "?mchid=" + wxProperties.getPay().getMchId());
+        return queryOrder(ORDER_URL + "id/" + transactionsId + "?mchid=" + wxPayProperties.getMchId());
     }
 
     /**
@@ -180,7 +179,7 @@ public class WxPayV3Service {
      */
     public WxPayResult queryOrderByOutTradeId(String outTradeId) throws WxPayException {
         Assert.notNull(outTradeId, "商户订单号不能为nll");
-        return queryOrder(ORDER_URL + "/out-trade-no/" + outTradeId + "?mchid=" + wxProperties.getPay().getMchId());
+        return queryOrder(ORDER_URL + "/out-trade-no/" + outTradeId + "?mchid=" + wxPayProperties.getMchId());
     }
 
     private WxPayResult queryOrder(String url) throws WxPayException {

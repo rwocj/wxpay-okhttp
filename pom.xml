@@ -10,7 +10,7 @@
     </parent>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-v3-spring-boot-starter</artifactId>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.6</version>
     <name>wx-pay-v3</name>
     <description>基于微信v3接口规则实现微信支付的starter</description>
 

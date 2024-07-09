@@ -2,20 +2,22 @@ package top.rwocj.wx.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import top.rwocj.wx.core.WxPayException;
-import top.rwocj.wx.dto.WxCreateOrderRequest;
-import top.rwocj.wx.dto.WxPayResult;
-import top.rwocj.wx.dto.WxRefundRequest;
-import top.rwocj.wx.enums.OrderType;
-import top.rwocj.wx.properties.WxPayProperties;
+import top.rwocj.wx.pay.core.WxPayException;
+import top.rwocj.wx.pay.dto.Payer;
+import top.rwocj.wx.pay.dto.WxCreateOrderRequest;
+import top.rwocj.wx.pay.dto.WxPayResult;
+import top.rwocj.wx.pay.dto.WxRefundRequest;
+import top.rwocj.wx.pay.enums.OrderType;
+import top.rwocj.wx.pay.properties.WxPayProperties;
+import top.rwocj.wx.pay.service.WxPayV3Service;
 
-import javax.annotation.Resource;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
@@ -38,7 +40,7 @@ class WxPayV3ServiceTest {
         WxCreateOrderRequest.Amount amount = new WxCreateOrderRequest.Amount();
         amount.setTotal(10);
         request.setAmount(amount);
-        WxCreateOrderRequest.Payer payer = new WxCreateOrderRequest.Payer();
+        Payer payer = new Payer();
         payer.setOpenid("oT5Pk5GxcjYfGQ-MCLi0QRp45Quc");
         request.setPayer(payer);
         String prepay_id = wxPayV3Service.createOrder(request);

@@ -1,6 +1,6 @@
 ## 基于Okhttp实现的微信支付v3接口的Spring boot starter
 
-### 需要JDK11+
+### 需要JDK17+ Spring Boot 3.x
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/top.rwocj/wxpay-v3-spring-boot-starter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/top.rwocj/wxpay-v3-spring-boot-starter)
 
@@ -22,12 +22,13 @@
 * 2、配置必要属性
   * wx.pay.app-id=appid
     * wx.pay.mchId=商户id
-    * wx.pay.certificate-serial-no=微信支付证书序列号
+    * wx.pay.certificate-serial-no=API证书序列号
     * wx.pay.api-v3-key=v3密钥
-    * wx.pay.private-key-path=classpath:/cert/微信支付证书私钥文件.pem
+    * wx.pay.private-key-path=classpath:/cert/API证书私钥文件apiclient_key.pem
     * wx.pay.notify-url=https://xxx/支付结果通知地址
 
 * 3、在业务Service/Controller中注入WxPayV3Service即可
-  * 支付回调接口信息验证:springboot2可调用WxPayV3Service.buildPayResult(HttpServletRequest request, String data)
-    ,springboot3调用WxPayV3Service.buildV3PayResult
-  * 未实现的接口可自行调用WxPayV3Service.post(String url, Object requestObject)
+  * jsapi支付: JSAPICreateOrderRes res = WxPayV3Service.createJSAPIOrder(createOrderRequest)
+  * 其他支付：String res = WxPayV3Service.createOrder(createOrderRequest)，返回值根据类型不同而不同,参见OrderType
+  * 支付回调验签与解密:WxPayResult payResult = WxPayV3Service.validateAndDecryptPayNotification(request)
+  * 其他未封装的接口可调用: WxPayV3Service.post(String url, Object requestBody)和WxPayV3Service.get(String url)

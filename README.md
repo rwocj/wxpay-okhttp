@@ -21,7 +21,7 @@
 
 * 2、配置必要属性
   * wx.pay.app-id=appid
-  * wx.pay.mchId=商户id
+  * wx.pay.mch-id=商户id
   * wx.pay.certificate-serial-no=API证书序列号
   * wx.pay.api-v3-key=v3密钥
   * wx.pay.private-key-path=classpath:/cert/API证书私钥文件apiclient_key.pem

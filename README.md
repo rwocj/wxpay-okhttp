@@ -21,11 +21,11 @@
 
 * 2、配置必要属性
   * wx.pay.app-id=appid
-    * wx.pay.mchId=商户id
-    * wx.pay.certificate-serial-no=API证书序列号
-    * wx.pay.api-v3-key=v3密钥
-    * wx.pay.private-key-path=classpath:/cert/API证书私钥文件apiclient_key.pem
-    * wx.pay.notify-url=https://xxx/支付结果通知地址
+  * wx.pay.mchId=商户id
+  * wx.pay.certificate-serial-no=API证书序列号
+  * wx.pay.api-v3-key=v3密钥
+  * wx.pay.private-key-path=classpath:/cert/API证书私钥文件apiclient_key.pem
+  * wx.pay.notify-url=https://xxx/支付结果通知地址
 
 * 3、在业务Service/Controller中注入WxPayV3Service即可
   * jsapi支付: JSAPICreateOrderRes res = WxPayV3Service.createJSAPIOrder(createOrderRequest)

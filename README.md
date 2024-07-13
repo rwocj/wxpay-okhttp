@@ -13,7 +13,7 @@ Spring Boot 3引入
 <dependency>
   <groupId>top.rwocj</groupId>
     <artifactId>wxpay-v3-spring-boot-starter</artifactId>
-  <version>0.6</version>
+  <version>0.7</version>
 </dependency>
 ```
 
@@ -22,7 +22,7 @@ Spring Boot 2引入
 <dependency>
   <groupId>top.rwocj</groupId>
     <artifactId>wxpay-v3-spring-boot-starter</artifactId>
-  <version>0.6-javax</version>
+  <version>0.7-javax</version>
 </dependency>
 ```
 注意：jdk1.8如报密钥太长问题，下载[jce_policy-8.zip](http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip)解压，将其中的local_policy.jar和US_export_policy.jar两个文件替换掉自己%JAVE_HOME%\jre\lib\security文件夹下对应的原文件

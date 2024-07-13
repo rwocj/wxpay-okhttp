@@ -17,19 +17,14 @@ public class WxPayProperties {
     private String mchId;
 
     /**
-     * 微信支付证书序列号
-     */
-    private String certificateSerialNo;
-
-    /**
      * v3接口密钥
      */
     private String apiV3Key;
 
     /**
-     * 微信支付私钥文件resource路径,如classpath:/cert/app.pem
+     * 微信支付api证书路径,如classpath:/cert/app.p12
      */
-    private Resource privateKeyPath;
+    private Resource p12Path;
 
     /**
      * 支付通知地址

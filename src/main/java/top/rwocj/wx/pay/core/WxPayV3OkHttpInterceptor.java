@@ -69,7 +69,7 @@ public class WxPayV3OkHttpInterceptor implements Interceptor {
                 try (Buffer buffer = new Buffer()) {
                     originalRequestBody.writeTo(buffer);
                     bodyStr = buffer.readString(StandardCharsets.UTF_8);
-                    RequestBody requestBody = RequestBody.create(bodyStr, originalRequestBody.contentType());
+                    RequestBody requestBody = RequestBody.create(originalRequestBody.contentType(), bodyStr);
                     switch (method) {
                         case "PUT":
                             newBuilder.put(requestBody);

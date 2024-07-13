@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.servlet.http.HttpServletRequest;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +15,7 @@ import top.rwocj.wx.pay.properties.WxPayProperties;
 import top.rwocj.wx.pay.util.AesUtil;
 import top.rwocj.wx.pay.util.SignUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -230,7 +230,7 @@ public class WxPayV3Service {
         }
         Request request = new Request.Builder()
                 .url(url)
-                .post(RequestBody.create(content, MediaType.parse("application/json;charset=utf-8")))
+                .post(RequestBody.create(MediaType.parse("application/json;charset=utf-8"), content))
                 .build();
         log.debug("微信请求体：{}", content);
         return request(request);
@@ -267,7 +267,7 @@ public class WxPayV3Service {
         Map<String, List<String>> stringListMap = headers.toMultimap();
         StringBuilder sb = new StringBuilder();
         stringListMap.forEach((key, value) -> sb.append(key).append("=").append(String.join(",", value)).append(","));
-        if (!sb.isEmpty()) {
+        if (sb.length() > 0) {
             sb.deleteCharAt(sb.lastIndexOf(","));
         }
         return sb.toString();

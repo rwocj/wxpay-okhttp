@@ -2,7 +2,6 @@ package top.rwocj.wx.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -18,6 +17,7 @@ import top.rwocj.wx.pay.enums.OrderType;
 import top.rwocj.wx.pay.properties.WxPayProperties;
 import top.rwocj.wx.pay.service.WxPayV3Service;
 
+import javax.annotation.Resource;
 import java.util.ResourceBundle;
 import java.util.UUID;
 

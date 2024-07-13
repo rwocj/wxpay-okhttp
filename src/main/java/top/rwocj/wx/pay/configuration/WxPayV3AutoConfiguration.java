@@ -13,11 +13,15 @@ import top.rwocj.wx.pay.core.*;
 import top.rwocj.wx.pay.properties.WxPayProperties;
 import top.rwocj.wx.pay.service.WxPayV3Service;
 import top.rwocj.wx.pay.util.OkHttpClientBuilderUtil;
-import top.rwocj.wx.pay.util.PemUtil;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.PrivateKey;
+import java.security.*;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 import java.util.stream.Collectors;
 
 @Configuration(proxyBeanMethods = false)
@@ -39,8 +43,16 @@ public class WxPayV3AutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public Sign wxPaySign(WxPayProperties wxPayProperties) throws IOException {
-        PrivateKey privateKey = PemUtil.loadPrivateKey(wxPayProperties.getPrivateKeyPath().getInputStream());
+    public Sign wxPaySign(WxPayProperties wxPayProperties) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        KeyStore ks = KeyStore.getInstance("PKCS12");
+        char[] charArray = wxPayProperties.getMchId().toCharArray();
+        ks.load(wxPayProperties.getP12Path().getInputStream(), charArray);
+        String keyAlias = null;
+        Enumeration<String> aliases = ks.aliases();
+        if (aliases.hasMoreElements()) {
+            keyAlias = aliases.nextElement();
+        }
+        PrivateKey privateKey = (PrivateKey) ks.getKey(keyAlias, charArray);
         return new DefaultV3Sign(privateKey);
     }
 
@@ -52,9 +64,18 @@ public class WxPayV3AutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public WxPayV3OkHttpInterceptor wxPayInterceptor(Credentials credentials, WxPayProperties wxPayProperties) {
-        return new WxPayV3OkHttpInterceptor(credentials, wxPayProperties.getMchId(),
-                wxPayProperties.getCertificateSerialNo());
+    public WxPayV3OkHttpInterceptor wxPayInterceptor(Credentials credentials, WxPayProperties wxPayProperties) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
+        KeyStore ks = KeyStore.getInstance("PKCS12");
+        char[] charArray = wxPayProperties.getMchId().toCharArray();
+        ks.load(wxPayProperties.getP12Path().getInputStream(), charArray);
+        String keyAlias = null;
+        Enumeration<String> aliases = ks.aliases();
+        if (aliases.hasMoreElements()) {
+            keyAlias = aliases.nextElement();
+        }
+        Certificate certificate = ks.getCertificate(keyAlias);
+        BigInteger serialNumber = ((X509Certificate) certificate).getSerialNumber();
+        return new WxPayV3OkHttpInterceptor(credentials, wxPayProperties.getMchId(), serialNumber.toString(16));
     }
 
     @Bean

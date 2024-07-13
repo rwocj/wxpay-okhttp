@@ -33,9 +33,9 @@ Spring Boot 2引入
   * wx.pay.app-id=appid
   * wx.pay.mch-id=商户id
   * wx.pay.api-v3-key=v3密钥
-  * wx.pay.certificate-serial-no=API证书序列号
-  * wx.pay.private-key-path=classpath:/cert/API证书私钥文件apiclient_key.pem
+  * wx.pay.p12-path=classpath:/cert/API证书.p12
   * wx.pay.notify-url=https://xxx/支付结果通知地址
+  * wx.pay.refund-notify-url=https://xxx/退款通知地址(可选)
 
 
 * 3、在业务Service/Controller中注入WxPayV3Service即可

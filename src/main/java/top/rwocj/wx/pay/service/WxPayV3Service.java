@@ -14,7 +14,6 @@ import top.rwocj.wx.pay.dto.*;
 import top.rwocj.wx.pay.enums.OrderType;
 import top.rwocj.wx.pay.properties.WxPayProperties;
 import top.rwocj.wx.pay.util.AesUtil;
-import top.rwocj.wx.pay.util.SignUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,22 +39,22 @@ public class WxPayV3Service {
 
     protected final ObjectMapper objectMapper;
 
-    protected final Validator validator;
+    protected final WxPayValidator wxPayValidator;
 
     protected final WxPayProperties wxPayProperties;
 
-    protected final Sign sign;
+    protected final SignHelper signHelper;
 
     protected final AesUtil aesUtil;
 
     public WxPayV3Service(OkHttpClient okHttpClient, ObjectMapper objectMapper,
-                          Validator validator, WxPayProperties wxPayProperties,
-                          Sign sign) {
+                          WxPayValidator wxPayValidator, WxPayProperties wxPayProperties,
+                          SignHelper signHelper) {
         this.okHttpClient = okHttpClient;
         this.objectMapper = objectMapper;
-        this.validator = validator;
+        this.wxPayValidator = wxPayValidator;
         this.wxPayProperties = wxPayProperties;
-        this.sign = sign;
+        this.signHelper = signHelper;
         this.aesUtil = new AesUtil(wxPayProperties.getApiV3Key().getBytes(StandardCharsets.UTF_8));
     }
 
@@ -103,7 +102,7 @@ public class WxPayV3Service {
      */
     public WxJSAPICreateOrderRes createJSAPIOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
         createOrderRequest.setOrderType(OrderType.jsapi);
-        return SignUtil.sign(createOrder(createOrderRequest), wxPayProperties.getAppIds().get(OrderType.jsapi), sign);
+        return signHelper.sign(createOrder(createOrderRequest), wxPayProperties.getAppIds().get(OrderType.jsapi));
     }
 
     /**
@@ -189,7 +188,7 @@ public class WxPayV3Service {
      */
     public WxRefundNoticeResult validateAndDecryptRefundNotification(HttpServletRequest request) throws WxPayException {
         String body = getRequestBody(request);
-        boolean b = validateWxRequest(new HttpServletRequestWxHeaders(request), body);
+        boolean b = wxPayValidator.validate(new HttpServletRequestWxHeaders(request), body);
         if (b) {
             return decodeWxNotice(body, WxRefundNoticeResult.class);
         } else {
@@ -206,25 +205,13 @@ public class WxPayV3Service {
      */
     public WxPayResult validateAndDecryptPayNotification(HttpServletRequest request) throws WxPayException {
         String body = getRequestBody(request);
-        boolean b = validateWxRequest(new HttpServletRequestWxHeaders(request), body);
+        boolean b = wxPayValidator.validate(new HttpServletRequestWxHeaders(request), body);
         if (b) {
             return decodeWxNotice(body, WxPayResult.class);
         } else {
             throw new WxPayException("验签不能过，非微信支付团队的消息！");
         }
     }
-
-    /**
-     * 验证微信发送过来的请求，以确保请求来自微信支付
-     *
-     * @param headers 请求header
-     * @param body    请求体
-     * @return true表示请求来自微信
-     */
-    protected boolean validateWxRequest(WxHeaders headers, String body) {
-        return validator.validate(headers, body);
-    }
-
 
     /**
      * 解密微信支付或退款通知
@@ -291,7 +278,7 @@ public class WxPayV3Service {
                     String string = body.string();
                     log.debug("微信响应：{}", string);
                     Headers headers = execute.headers();
-                    boolean validate = validator.validate(new OkHttpWxHeaders(execute), string);
+                    boolean validate = wxPayValidator.validate(new OkHttpWxHeaders(execute), string);
                     if (!validate) {
                         throw new WxPayException(String.format("验证响应失败!:响应体：%s,响应headers:%s", string, buildHeader(headers)));
                     } else {

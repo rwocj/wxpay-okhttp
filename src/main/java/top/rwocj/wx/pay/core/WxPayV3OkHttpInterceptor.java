@@ -15,14 +15,14 @@ public class WxPayV3OkHttpInterceptor implements Interceptor {
 
     static final String version = System.getProperty("java.version");
 
-    private final Credentials credentials;
+    private final SignHelper signHelper;
 
     private final String machId;
 
     private final String certificateSerialNo;
 
-    public WxPayV3OkHttpInterceptor(Credentials credentials, String machId, String certificateSerialNo) {
-        this.credentials = credentials;
+    public WxPayV3OkHttpInterceptor(SignHelper signHelper, String machId, String certificateSerialNo) {
+        this.signHelper = signHelper;
         this.machId = machId;
         this.certificateSerialNo = certificateSerialNo;
     }
@@ -55,8 +55,8 @@ public class WxPayV3OkHttpInterceptor implements Interceptor {
 
     protected void addAuthorization(Request.Builder newBuilder, Request originalRequest) throws IOException {
         String bodyStr = getBodyStr(newBuilder, originalRequest);
-        String token = credentials.getToken(originalRequest.method(), originalRequest.url().toString(), bodyStr, machId, certificateSerialNo);
-        newBuilder.header("Authorization", credentials.getSchema() + " " + token);
+        String token = signHelper.getToken(originalRequest.method(), originalRequest.url().toString(), bodyStr, machId, certificateSerialNo);
+        newBuilder.header("Authorization", SignHelper.AUTHORIZATION_TYPE + " " + token);
     }
 
     private String getBodyStr(Request.Builder newBuilder, Request originalRequest) throws IOException {

@@ -25,7 +25,7 @@ public class AesUtil {
     }
 
     public String decryptToString(byte[] associatedData, byte[] nonce, String ciphertext)
-        throws GeneralSecurityException {
+            throws GeneralSecurityException {
         try {
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
 

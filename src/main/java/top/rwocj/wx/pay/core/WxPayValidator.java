@@ -1,21 +1,21 @@
 package top.rwocj.wx.pay.core;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.time.DateTimeException;
 import java.time.Duration;
 import java.time.Instant;
 
-public class DefaultV3Validator implements Validator {
-
-    private final static Logger log = LoggerFactory.getLogger(DefaultV3Validator.class);
+/**
+ * 微信通知/响应验证器，用以验证消息来源于微信支付官方
+ */
+@Slf4j
+public class WxPayValidator {
 
     private final SignVerifier signVerifier;
 
-    public DefaultV3Validator(SignVerifier signVerifier) {
+    public WxPayValidator(SignVerifier signVerifier) {
         this.signVerifier = signVerifier;
     }
 
@@ -29,7 +29,6 @@ public class DefaultV3Validator implements Validator {
         return new IllegalArgumentException("signature verify fail: " + message);
     }
 
-    @Override
     public final boolean validate(WxHeaders wxHeaders, String responseStr) {
         try {
             validateParameters(wxHeaders);

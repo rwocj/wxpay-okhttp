@@ -60,7 +60,7 @@ private final WxPayV3Service wxPayV3Service;
 
 public void create() {
     WxCreateOrderRequest request = WxCreateOrderRequest.jsapiOrder("商品名称", "外部订单号", 100, "openid");
-    String result = wxPayV3Service.createOrder(request);
+    WxJSAPICreateOrderRes result = wxPayV3Service.createJSAPIOrder(request);
 }
 ```
 

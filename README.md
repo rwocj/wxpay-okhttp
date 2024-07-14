@@ -60,8 +60,6 @@ private final WxPayV3Service wxPayV3Service;
 
 public void create() {
     WxCreateOrderRequest request = WxCreateOrderRequest.jsapiOrder("商品名称", "外部订单号", 100, "openid");
-    //如果同一个商户需要支持不同的支付方式，且配置文件设置的是其他支付方式的appid，这里可以手动设置公众号的appid
-    request.setAppid("jsapi-appid");
     String result = wxPayV3Service.createOrder(request);
 }
 ```

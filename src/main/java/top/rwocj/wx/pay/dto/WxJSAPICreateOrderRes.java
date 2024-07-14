@@ -9,7 +9,7 @@ import lombok.Data;
  * <a href="https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/pay/transactions/chapter3_8.shtml">...</a>
  */
 @Data
-public class JSAPICreateOrderRes {
+public class WxJSAPICreateOrderRes {
 
     private String appId;
     private String timeStamp;

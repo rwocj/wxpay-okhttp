@@ -8,7 +8,7 @@ public enum OrderType {
 
     app("app", "app下单", (node) -> node.get("prepay_id").asText()),
     jsapi("jsapi", "jsapi下单", (node) -> node.get("prepay_id").asText()),
-    nativeS("native", "native下单", (node) -> node.get("code_url").asText()),
+    natives("native", "native下单", (node) -> node.get("code_url").asText()),
     h5("h5", "h5下单", (node) -> node.get("h5_url").asText());
 
     private final String url;

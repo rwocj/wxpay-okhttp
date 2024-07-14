@@ -2,14 +2,17 @@ package top.rwocj.wx.pay.properties;
 
 import lombok.Data;
 import org.springframework.core.io.Resource;
+import top.rwocj.wx.pay.enums.OrderType;
+
+import java.util.Map;
 
 @Data
 public class WxPayProperties {
 
     /**
-     * 微信公众应用appId
+     * 应用appId
      */
-    private String appId;
+    private Map<OrderType, String> appIds;
 
     /**
      * 微信支付商户号

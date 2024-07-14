@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>top.rwocj</groupId>
-    <artifactId>wxpay-v3-spring-boot-starter</artifactId>
+    <artifactId>wxpay-okhttp</artifactId>
     <version>0.8</version>
-    <name>wx-pay-v3</name>
-    <description>基于微信v3接口规则实现微信支付的starter</description>
+    <name>wxpay-okhttp</name>
+    <description>基于Okhttp实现微信支付v3接口的SDK</description>
 
     <licenses>
         <license>
@@ -21,9 +21,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:https://github.com/rwocj/wxpay-v3-spring-boot-starter.git</connection>
-        <developerConnection>scm:git:https://github.com/rwocj/wxpay-v3-spring-boot-starter.git</developerConnection>
-        <url>https://github.com/rwocj/wxpay-v3-spring-boot-starter</url>
+        <connection>scm:git:https://github.com/rwocj/wxpay-okhttp.git</connection>
+        <developerConnection>scm:git:https://github.com/rwocj/wxpay-okhttp.git</developerConnection>
+        <url>https://github.com/rwocj/wxpay-okhttp</url>
     </scm>
     <developers>
         <developer>

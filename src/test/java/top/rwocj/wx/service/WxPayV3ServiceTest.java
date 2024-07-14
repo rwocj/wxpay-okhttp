@@ -52,13 +52,10 @@ class WxPayV3ServiceTest {
     @Test
     @Disabled
     void refund() throws WxPayException {
-        WxRefundRequest refundRequest = new WxRefundRequest();
-        refundRequest.setNotifyUrl(wxPayProperties.getRefundNotifyUrl());
-        WxRefundRequest.Amount amount = new WxRefundRequest.Amount();
+        WxRefundRequest.Amount amount = new WxRefundRequest.Amount(1, 1);
         amount.setTotal(1);
         amount.setRefund(1);
-        refundRequest.setAmount(amount);
-        refundRequest.setOutRefundNo(UUID.randomUUID().toString());
+        WxRefundRequest refundRequest = new WxRefundRequest(amount, UUID.randomUUID().toString(), UUID.randomUUID().toString());
         wxPayV3Service.refund(refundRequest);
     }
 

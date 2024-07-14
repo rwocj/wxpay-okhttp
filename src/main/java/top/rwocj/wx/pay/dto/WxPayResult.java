@@ -41,8 +41,6 @@ public class WxPayResult {
     private TradeState tradeState;
     /**
      * 交易状态描述
-     *
-     * @mock 支付失败，请重新下单支付
      */
     @JsonProperty(value = "trade_state_desc", required = true)
     private String tradeStateDesc;
@@ -53,8 +51,6 @@ public class WxPayResult {
     private String bankType;
     /**
      * 支付完成时间
-     *
-     * @mock 2018-06-08T10:34:56+08:00
      */
     @JsonProperty(value = "success_time", required = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'+'08:00")

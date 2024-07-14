@@ -1,7 +1,7 @@
 package top.rwocj.wx.pay.util;
 
 import top.rwocj.wx.pay.core.Sign;
-import top.rwocj.wx.pay.dto.JSAPICreateOrderRes;
+import top.rwocj.wx.pay.dto.WxJSAPICreateOrderRes;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -12,8 +12,8 @@ public class SignUtil {
 
     }
 
-    public static JSAPICreateOrderRes sign(String prepay_id, String appid, Sign sign) {
-        JSAPICreateOrderRes res = new JSAPICreateOrderRes();
+    public static WxJSAPICreateOrderRes sign(String prepay_id, String appid, Sign sign) {
+        WxJSAPICreateOrderRes res = new WxJSAPICreateOrderRes();
         res.setAppId(appid);
         res.setTimeStamp(String.valueOf(System.currentTimeMillis() / 1000));
         res.setNonceStr(UUID.randomUUID().toString().replaceAll("-", ""));

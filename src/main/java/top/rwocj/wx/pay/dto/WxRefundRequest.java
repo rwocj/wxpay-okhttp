@@ -7,7 +7,6 @@ import lombok.Data;
 
 import java.util.List;
 
-
 /**
  * 微信退款请求体
  */
@@ -16,25 +15,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WxRefundRequest {
 
-    /**
-     * 二级商户号
-     *
-     * @required
-     */
-    @JsonProperty("sub_mchid")
-    private String subMchid;
-    /**
-     * 电商平台APPID
-     *
-     * @required
-     */
-    @JsonProperty("sp_appid")
-    private String spAppid;
-    /**
-     * 二级商户APPID
-     */
-    @JsonProperty("sub_appid")
-    private String subAppid;
     /**
      * 微信订单号
      */
@@ -49,25 +29,17 @@ public class WxRefundRequest {
      * 商户退款单号
      * 商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@，同一退款单号多次请求只退一笔
      * 退款失败的话，再使用相同的退款单号请求
-     *
-     * @required
+     * 同一退款单号多次请求只退一笔
      */
     @JsonProperty("out_refund_no")
     private String outRefundNo;
     /**
      * 退款原因
-     * 若商户传入，会在下发给用户的退款消息中体现退款原因。
+     * 若商户传入，会在下发给用户的退款消息中体现退款原因
      * 注意：若订单退款金额≤1元，且属于部分退款，则不会在退款消息中体现退款原因
      */
     @JsonProperty("reason")
     private String reason;
-    /**
-     * 订单金额
-     *
-     * @required
-     */
-    @JsonProperty("amount")
-    private Amount amount;
     /**
      * 退款结果回调url
      * 异步接收微信支付退款结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数。
@@ -76,6 +48,37 @@ public class WxRefundRequest {
     @JsonProperty("notify_url")
     private String notifyUrl;
 
+    /**
+     * 若传递此参数则使用对应的资金账户退款，否则默认使用未结算资金退款（仅对老资金流商户适用）
+     * 枚举值：
+     * AVAILABLE：可用余额账户
+     */
+    @JsonProperty("funds_account")
+    private String fundsAccount;
+    /**
+     * 订单金额
+     */
+    @JsonProperty("amount")
+    private Amount amount;
+
+    /**
+     * 指定商品退款需要传此参数，其他场景无需传递
+     */
+    @JsonProperty("goods_detail")
+    private List<RefundGoodsDetail> goodsDetails;
+
+    public WxRefundRequest(String transactionId, String outRefundNo, Amount amount) {
+        this.transactionId = transactionId;
+        this.outRefundNo = outRefundNo;
+        this.amount = amount;
+    }
+
+    public WxRefundRequest(Amount amount, String outRefundNo, String outTradeNo) {
+        this.outTradeNo = outTradeNo;
+        this.outRefundNo = outRefundNo;
+        this.amount = amount;
+    }
+
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -83,8 +86,6 @@ public class WxRefundRequest {
         /**
          * 退款金额
          * 退款金额，币种的最小单位，只能为整数，不能超过原订单支付金额
-         *
-         * @required
          */
         @JsonProperty("refund")
         private int refund;
@@ -100,12 +101,10 @@ public class WxRefundRequest {
          * 上述任一条件不满足将返回错误
          */
         @JsonProperty("from")
-        private List<FundingAccount> from;
+        private List<RefundFrom> from;
 
         /**
          * 原订单金额
-         *
-         * @required
          */
         @JsonProperty("total")
         private int total;
@@ -116,31 +115,11 @@ public class WxRefundRequest {
         @JsonProperty("currency")
         private String currency;
 
+        public Amount(int refund, int total) {
+            this.refund = refund;
+            this.total = total;
+            this.currency = "CNY";
+        }
     }
 
-    @Data
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class FundingAccount {
-
-        /**
-         * 下面枚举值多选一。
-         * 枚举值：
-         * AVAILABLE : 可用余额
-         * UNAVAILABLE : 不可用余额
-         *
-         * @required
-         */
-        @JsonProperty("account")
-        private String account;
-
-        /**
-         * 对应账户出资金额
-         *
-         * @required
-         */
-        @JsonProperty("amount")
-        private Integer amount;
-
-    }
 }

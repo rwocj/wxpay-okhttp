@@ -30,11 +30,11 @@ public class WxPayV3Service {
     /**
      * 普通商户下单url
      */
-    final static String ORDER_URL = "https://api.mch.weixin.qq.com/v3/pay/transactions/";
+    public final static String ORDER_URL = "https://api.mch.weixin.qq.com/v3/pay/transactions/";
     /**
-     * 电商平台退款url
+     * 申请退款url
      */
-    final static String REFUND_URL = "https://api.mch.weixin.qq.com/v3/ecommerce/refunds/apply";
+    public final static String REFUND_URL = "https://api.mch.weixin.qq.com/v3/refund/domestic/refunds";
 
     protected final OkHttpClient okHttpClient;
 
@@ -71,43 +71,23 @@ public class WxPayV3Service {
      */
     public String createOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
         if (createOrderRequest.getAppid() == null) {
-            createOrderRequest.setAppid(wxPayProperties.getAppId());
-        }
-        if (createOrderRequest.getMchid() == null) {
-            createOrderRequest.setMchid(wxPayProperties.getMchId());
+            OrderType orderType = createOrderRequest.getOrderType();
+            String appid = wxPayProperties.getAppIds().get(orderType);
+            if (appid == null) {
+                throw new WxPayException("未设置" + orderType.getRemark() + "对应的appid");
+            }
+            createOrderRequest.setAppid(appid);
         }
         if (createOrderRequest.getNotifyUrl() == null) {
             createOrderRequest.setNotifyUrl(wxPayProperties.getNotifyUrl());
         }
+        createOrderRequest.setMchId(wxPayProperties.getMchId());
         OrderType orderType = createOrderRequest.getOrderType();
         String url = ORDER_URL + orderType.getUrl();
         String res = post(url, createOrderRequest);
         try {
             JsonNode jsonNode = objectMapper.readTree(res);
             return orderType.resultFunc.apply(jsonNode);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    /**
-     * 电商平台微信退款
-     * <a href="https://pay.weixin.qq.com/wiki/doc/apiv3/wxpay/ecommerce/refunds/chapter3_1.shtml">电商平台微信退款接入文档</a>
-     *
-     * @param refundRequest 退款请求体
-     * @return 退款结果
-     * @throws WxPayException 退款失败
-     */
-    public WxRefundRes refund(WxRefundRequest refundRequest) throws WxPayException {
-        if (refundRequest.getSpAppid() == null) {
-            refundRequest.setSpAppid(wxPayProperties.getAppId());
-        }
-        if (refundRequest.getSubMchid() == null) {
-            refundRequest.setSubMchid(wxPayProperties.getMchId());
-        }
-        String res = post(REFUND_URL, refundRequest);
-        try {
-            return objectMapper.readValue(res, WxRefundRes.class);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException(e);
         }
@@ -121,9 +101,9 @@ public class WxPayV3Service {
      * @return 下单成功后JSAPI调用支付需要的数据
      * @throws WxPayException 下单失败
      */
-    public JSAPICreateOrderRes createJSAPIOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
+    public WxJSAPICreateOrderRes createJSAPIOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
         createOrderRequest.setOrderType(OrderType.jsapi);
-        return SignUtil.sign(createOrder(createOrderRequest), wxPayProperties.getAppId(), sign);
+        return SignUtil.sign(createOrder(createOrderRequest), wxPayProperties.getAppIds().get(OrderType.jsapi), sign);
     }
 
     /**
@@ -138,6 +118,22 @@ public class WxPayV3Service {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("mchid", wxPayProperties.getMchId());
         post(url, objectNode);
+    }
+
+    /**
+     * 查询订单，返回支付结果
+     *
+     * @param url 请求url，完善的url
+     * @return 支付结果
+     * @throws WxPayException 查单失败
+     */
+    public WxPayResult queryOrder(String url) throws WxPayException {
+        String result = get(url);
+        try {
+            return objectMapper.readValue(result, WxPayResult.class);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
@@ -164,12 +160,57 @@ public class WxPayV3Service {
         return queryOrder(ORDER_URL + "/out-trade-no/" + outTradeId + "?mchid=" + wxPayProperties.getMchId());
     }
 
-    public WxPayResult queryOrder(String url) throws WxPayException {
-        String result = get(url);
+    /**
+     * 电商平台微信退款
+     * <a href="https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_1_9.shtml">申请退款</a>
+     *
+     * @param refundRequest 退款请求体
+     * @return 退款结果
+     * @throws WxPayException 退款失败
+     */
+    public WxRefundResult refund(WxRefundRequest refundRequest) throws WxPayException {
+        if (refundRequest.getNotifyUrl() == null && wxPayProperties.getRefundNotifyUrl() != null) {
+            refundRequest.setNotifyUrl(wxPayProperties.getRefundNotifyUrl());
+        }
+        String res = post(REFUND_URL, refundRequest);
         try {
-            return objectMapper.readValue(result, WxPayResult.class);
+            return objectMapper.readValue(res, WxRefundResult.class);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException(e);
+        }
+    }
+
+    /**
+     * 验证微信退款通知，并解密
+     *
+     * @param request 微信请求
+     * @return 解密后的支付结果
+     * @throws WxPayException 验签或解密失败
+     */
+    public WxRefundNoticeResult validateAndDecryptRefundNotification(HttpServletRequest request) throws WxPayException {
+        String body = getRequestBody(request);
+        boolean b = validateWxRequest(new HttpServletRequestWxHeaders(request), body);
+        if (b) {
+            return decodeWxNotice(body, WxRefundNoticeResult.class);
+        } else {
+            throw new WxPayException("验签不能过，非微信支付团队的消息！");
+        }
+    }
+
+    /**
+     * 验证微信支付通知，并解密
+     *
+     * @param request 微信请求
+     * @return 解密后的支付结果
+     * @throws WxPayException 验签或解密失败
+     */
+    public WxPayResult validateAndDecryptPayNotification(HttpServletRequest request) throws WxPayException {
+        String body = getRequestBody(request);
+        boolean b = validateWxRequest(new HttpServletRequestWxHeaders(request), body);
+        if (b) {
+            return decodeWxNotice(body, WxPayResult.class);
+        } else {
+            throw new WxPayException("验签不能过，非微信支付团队的消息！");
         }
     }
 
@@ -184,35 +225,33 @@ public class WxPayV3Service {
         return validator.validate(headers, body);
     }
 
-    public WxPayResult validateAndDecryptPayNotification(HttpServletRequest request) throws WxPayException {
-        String body = getRequestBody(request);
-        boolean b = validateWxRequest(new HttpServletRequestWxHeaders(request), body);
-        if (b) {
-            return buildPayResult(body);
-        } else {
-            throw new WxPayException("验签不能过，非微信支付团队的消息！");
-        }
-    }
 
     /**
-     * 处理微信支付结果，请先验证签名再调用此方法
+     * 解密微信支付或退款通知
      *
      * @param data 微信Post过来的加密的数据
      * @return 支付结果
      * @throws WxPayException 处理支付结果失败，如非微信通知的支付结果
      */
-    protected WxPayResult buildPayResult(String data) throws WxPayException {
+    protected <T> T decodeWxNotice(String data, Class<T> tClass) throws WxPayException {
         try {
             JsonNode jsonNode = objectMapper.readTree(data);
             JsonNode resource = jsonNode.get("resource");
             String s = aesUtil.decryptToString(resource.get("associated_data").asText().getBytes(StandardCharsets.UTF_8),
                     resource.get("nonce").asText().getBytes(StandardCharsets.UTF_8), resource.get("ciphertext").asText());
-            return objectMapper.readValue(s, WxPayResult.class);
+            return objectMapper.readValue(s, tClass);
         } catch (GeneralSecurityException | JsonProcessingException e) {
             throw new WxPayException(data, e);
         }
     }
 
+    /**
+     * 通用的GET方法，用于请求其他微信接口
+     *
+     * @param url 完善的请求地址
+     * @return 请求结果
+     * @throws WxPayException 请求失败
+     */
     public String get(String url) throws WxPayException {
         Request request = new Request.Builder()
                 .url(url)
@@ -220,7 +259,13 @@ public class WxPayV3Service {
         return request(request);
     }
 
-
+    /**
+     * 通用的POST方法，用于请求其他微信接口
+     *
+     * @param url 完善的请求地址
+     * @return 请求结果
+     * @throws WxPayException 请求失败
+     */
     public String post(String url, Object requestBody) throws WxPayException {
         String content = null;
         try {

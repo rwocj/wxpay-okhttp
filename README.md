@@ -1,6 +1,6 @@
 ## 基于Okhttp实现的微信支付v3接口的Spring boot starter
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/top.rwocj/wxpay-v3-spring-boot-starter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/top.rwocj/wxpay-v3-spring-boot-starter)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/top.rwocj/wxpay-okhttp-spring-boot-starter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/top.rwocj/wxpay-okhttp-spring-boot-starter)
 
 #### 目前只完成直连商户(普通商户)基础支付，包含下单、查询、关单、退款、支付通知、退款通知等
 

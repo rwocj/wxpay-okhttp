@@ -11,33 +11,32 @@
 Spring Boot3 引入
 
 ```xml
-
 <dependency>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp-spring-boot-starter</artifactId>
-    <version>0.9</version>
+    <version>0.10</version>
 </dependency>
 ```
 
 Spring Boot2 引入
 
 ```xml
-
 <dependency>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp-spring-boot-starter</artifactId>
-    <version>0.9-javax</version>
+    <version>0.10-javax</version>
 </dependency>
 ```
 
 其他项目引入
 
 ```xml
-
 <dependency>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp-sdk</artifactId>
-    <version>0.9</version>
+    <version>0.10</version>
+    <!-- servlet 6.0以下使用 -->
+    <!-- <version>0.10-javax</version> -->
 </dependency>
 ```
 

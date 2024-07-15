@@ -8,32 +8,50 @@
 
 ##### 1、pom引入组件
 
-Spring Boot 3引入
+Spring Boot3 引入
 
 ```xml
 
 <dependency>
     <groupId>top.rwocj</groupId>
-    <artifactId>wxpay-v3-spring-boot-starter</artifactId>
-    <version>0.8</version>
+    <artifactId>wxpay-okhttp-spring-boot-starter</artifactId>
+    <version>0.9</version>
 </dependency>
 ```
 
-Spring Boot 2引入
+Spring Boot2 引入
 
 ```xml
 
 <dependency>
     <groupId>top.rwocj</groupId>
-    <artifactId>wxpay-v3-spring-boot-starter</artifactId>
-    <version>0.8-javax</version>
+    <artifactId>wxpay-okhttp-spring-boot-starter</artifactId>
+    <version>0.9-javax</version>
 </dependency>
+```
+
+其他项目引入
+
+```xml
+
+<dependency>
+    <groupId>top.rwocj</groupId>
+    <artifactId>wxpay-okhttp-sdk</artifactId>
+    <version>0.9</version>
+</dependency>
+```
+
+手动创建WxPayV3Service实例,springboot项目跳过此步骤
+
+```java
+import top.rwocj.wx.pay.service.WxPayV3Service;
+import top.rwocj.wx.pay.util.WxPayV3ServiceFactory;
+
+WxPayV3Service wxPayV3Service = WxPayV3ServiceFactory.create(xxx);
 ```
 
 注意：jdk1.8如报密钥太长问题，下载[jce_policy-8.zip](http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip)
 解压，将其中的local_policy.jar和US_export_policy.jar两个文件替换掉自己%JAVE_HOME%\jre\lib\security文件夹下对应的原文件
-
-其他Java项目，可参照WxPayV3AutoConfiguration，手动初始化WxPayV3Service类
 
 ##### 2、配置必要属性,不需要对应的支付方式，则不设置其对应的appid
 
@@ -47,7 +65,7 @@ Spring Boot 2引入
 * wx.pay.notify-url=https://xxx/支付结果通知地址
 * wx.pay.refund-notify-url=https://xxx/退款通知地址(可选)
 
-##### 3、在业务Service/Controller中注入WxPayV3Service即可
+##### 3、在业务层中注入WxPayV3Service即可
 
 * jsapi支付示例
 
@@ -60,7 +78,7 @@ private final WxPayV3Service wxPayV3Service;
 
 public void create() {
     WxCreateOrderRequest request = WxCreateOrderRequest.jsapiOrder("商品名称", "外部订单号", 100, "openid");
-    String result = wxPayV3Service.createOrder(request);
+    WxJSAPICreateOrderRes result = wxPayV3Service.createJSAPIOrder(request);
 }
 ```
 
@@ -101,6 +119,18 @@ public Result payNotice(HttpServletRequest request) {
 }
 ```
 
+* 申请退款示例：
+
+```java
+import top.rwocj.wx.pay.service.WxPayV3Service;
+
+private final WxPayV3Service wxPayV3Service;
+
+public void refund() {
+    wxPayV3Service.refund(wxRefundRequest);
+}
+```
+
 * 退款通知验签与解密示例：
 
 ```java
@@ -120,6 +150,33 @@ public Result refundNotice(HttpServletRequest request) {
     } catch (WxPayException wxPayException) {
         return Result.fail();
     }
+}
+```
+
+* 查单示例：
+
+```java
+import top.rwocj.wx.pay.service.WxPayV3Service;
+
+private final WxPayV3Service wxPayV3Service;
+
+public void queryOrder() {
+    //任选一
+    wxPayV3Service.queryOrder(url);
+    wxPayV3Service.queryOrderByTransactionsId(transactionsId);
+    wxPayV3Service.queryOrderByOutTradeId(outTradeId);
+}
+```
+
+* 关单示例：
+
+```java
+import top.rwocj.wx.pay.service.WxPayV3Service;
+
+private final WxPayV3Service wxPayV3Service;
+
+public void closeOrder() {
+    wxPayV3Service.closeOrder(outTradeId);
 }
 ```
 

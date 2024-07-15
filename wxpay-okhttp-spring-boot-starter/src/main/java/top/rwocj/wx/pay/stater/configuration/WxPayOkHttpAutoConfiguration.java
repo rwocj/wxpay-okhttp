@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureAfter(JacksonAutoConfiguration.class)
-@ConditionalOnMissingBean
 public class WxPayOkHttpAutoConfiguration implements ResourceLoaderAware {
 
     private final ObjectMapper objectMapper;

@@ -1,13 +1,16 @@
 package top.rwocj.wx.pay.enums;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.Getter;
 
 import java.util.function.Function;
 
+@Getter
 public enum OrderType {
 
     app("app", "app下单", (node) -> node.get("prepay_id").asText()),
-    jsapi("jsapi", "jsapi下单", (node) -> node.get("prepay_id").asText()),
+    jsapi_public("jsapi", "公众号支付", (node) -> node.get("prepay_id").asText()),
+    jsapi_mini_program("jsapi", "小程序支付", (node) -> node.get("prepay_id").asText()),
     natives("native", "native下单", (node) -> node.get("code_url").asText()),
     h5("h5", "h5下单", (node) -> node.get("h5_url").asText());
 
@@ -24,13 +27,5 @@ public enum OrderType {
         this.url = url;
         this.remark = remark;
         this.resultFunc = resultFunc;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getRemark() {
-        return remark;
     }
 }

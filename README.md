@@ -24,7 +24,7 @@ Spring Boot2 引入
 <dependency>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp-spring-boot-starter</artifactId>
-    <version>0.10-javax</version>
+    <version>0.11-javax</version>
 </dependency>
 ```
 

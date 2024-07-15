@@ -8,7 +8,7 @@
 
 ##### 1、pom引入组件
 
-Spring Boot 引入，支持2和3
+Spring Boot3 引入
 
 ```xml
 
@@ -16,6 +16,17 @@ Spring Boot 引入，支持2和3
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp-spring-boot-starter</artifactId>
     <version>0.9</version>
+</dependency>
+```
+
+Spring Boot2 引入
+
+```xml
+
+<dependency>
+    <groupId>top.rwocj</groupId>
+    <artifactId>wxpay-okhttp-spring-boot-starter</artifactId>
+    <version>0.9-javax</version>
 </dependency>
 ```
 

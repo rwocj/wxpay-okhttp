@@ -2,7 +2,7 @@ package top.rwocj.wx.pay.util;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import top.rwocj.wx.pay.configuration.OkHttpClientCustomizer;
+import top.rwocj.wx.pay.core.OkHttpClientCustomizer;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;

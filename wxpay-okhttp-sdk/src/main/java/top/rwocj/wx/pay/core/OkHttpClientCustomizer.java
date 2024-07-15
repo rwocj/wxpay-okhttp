@@ -1,4 +1,4 @@
-package top.rwocj.wx.pay.configuration;
+package top.rwocj.wx.pay.core;
 
 import okhttp3.OkHttpClient;
 

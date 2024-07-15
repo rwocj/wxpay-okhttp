@@ -10,7 +10,7 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
-import top.rwocj.wx.pay.configuration.OkHttpClientCustomizer;
+import top.rwocj.wx.pay.core.OkHttpClientCustomizer;
 import top.rwocj.wx.pay.property.WxPayProperties;
 import top.rwocj.wx.pay.service.WxPayV3Service;
 import top.rwocj.wx.pay.util.WxPayV3ServiceFactory;

@@ -188,51 +188,9 @@ public class WxPayV3Service {
     public WxRefundNoticeResult validateAndDecryptRefundNotification(HttpServletRequest request) throws WxPayException {
         try {
             String body = getRequestBody(request.getInputStream());
-            boolean b = wxPayValidator.validate(new JakartaHttpServletRequestWxHeaders(request), body);
-            if (b) {
-                return decryptWxNotice(body, WxRefundNoticeResult.class);
-            } else {
-                throw new WxPayException("验签不能过，非微信支付团队的消息！");
-            }
-        } catch (IOException e) {
-            throw new WxPayException("验签不能过，非微信支付团队的消息！", e);
-        }
-    }
-
-    /**
-     * 验证微信退款通知，并解密
-     *
-     * @param request 微信请求
-     * @return 解密后的支付结果
-     * @throws WxPayException 验签或解密失败
-     */
-    public WxRefundNoticeResult validateAndDecryptRefundNotification(javax.servlet.http.HttpServletRequest request) throws WxPayException {
-        try {
-            String body = getRequestBody(request.getInputStream());
             boolean b = wxPayValidator.validate(new HttpServletRequestWxHeaders(request), body);
             if (b) {
                 return decryptWxNotice(body, WxRefundNoticeResult.class);
-            } else {
-                throw new WxPayException("验签不能过，非微信支付团队的消息！");
-            }
-        } catch (IOException e) {
-            throw new WxPayException("验签不能过，非微信支付团队的消息！", e);
-        }
-    }
-
-    /**
-     * 验证微信支付通知，并解密
-     *
-     * @param request 微信请求
-     * @return 解密后的支付结果
-     * @throws WxPayException 验签或解密失败
-     */
-    public WxPayResult validateAndDecryptPayNotification(javax.servlet.http.HttpServletRequest request) throws WxPayException {
-        try {
-            String body = getRequestBody(request.getInputStream());
-            boolean b = wxPayValidator.validate(new HttpServletRequestWxHeaders(request), body);
-            if (b) {
-                return decryptWxNotice(body, WxPayResult.class);
             } else {
                 throw new WxPayException("验签不能过，非微信支付团队的消息！");
             }
@@ -251,7 +209,7 @@ public class WxPayV3Service {
     public WxPayResult validateAndDecryptPayNotification(HttpServletRequest request) throws WxPayException {
         try {
             String body = getRequestBody(request.getInputStream());
-            boolean b = wxPayValidator.validate(new JakartaHttpServletRequestWxHeaders(request), body);
+            boolean b = wxPayValidator.validate(new HttpServletRequestWxHeaders(request), body);
             if (b) {
                 return decryptWxNotice(body, WxPayResult.class);
             } else {

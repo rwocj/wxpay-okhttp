@@ -11,7 +11,8 @@
         <module>wxpay-okhttp-sdk</module>
         <module>wxpay-okhttp-spring-boot-starter</module>
     </modules>
-    <description>基于Okhttp实现微信支付v3接口的SDK</description>
+    <description>base okhttp for weixin pay v3</description>
+    <url>https://github.com/rwocj/wxpay-okhttp</url>
 
     <licenses>
         <license>
@@ -33,7 +34,7 @@
     </developers>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     </properties>
 
@@ -62,7 +63,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.13</version>
         </dependency>
     </dependencies>
 

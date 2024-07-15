@@ -1,6 +1,7 @@
 package top.rwocj.wx.pay.core;
 
-import javax.servlet.http.HttpServletRequest;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class HttpServletRequestWxHeaders implements WxHeaders {
 

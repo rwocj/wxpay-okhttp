@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp</artifactId>
-    <version>0.9</version>
+    <version>0.10-javax</version>
     <name>wxpay-okhttp</name>
     <packaging>pom</packaging>
     <modules>
@@ -34,7 +34,7 @@
     </developers>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     </properties>
 
@@ -43,12 +43,12 @@
             <dependency>
                 <groupId>top.rwocj</groupId>
                 <artifactId>wxpay-okhttp-sdk</artifactId>
-                <version>0.9</version>
+                <version>0.10-javax</version>
             </dependency>
             <dependency>
                 <groupId>top.rwocj</groupId>
                 <artifactId>wxpay-okhttp-stater-common</artifactId>
-                <version>0.9</version>
+                <version>0.10-javax</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.13</version>
+            <version>1.7.36</version>
         </dependency>
     </dependencies>
 

@@ -100,14 +100,6 @@ public class WxCreateOrderRequest {
         this.payer = payer;
     }
 
-    public static WxCreateOrderRequest jsapiOrder(String description, String outTradeNo, int total, String openid) {
-        return WxCreateOrderRequest.jsapiOrder(description, outTradeNo, new Amount(total), new Payer(openid));
-    }
-
-    public static WxCreateOrderRequest jsapiOrder(String description, String outTradeNo, Amount amount, Payer payer) {
-        return new WxCreateOrderRequest(description, outTradeNo, OrderType.jsapi, amount, payer);
-    }
-
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NoArgsConstructor

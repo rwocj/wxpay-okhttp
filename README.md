@@ -11,33 +11,32 @@
 Spring Boot3 引入
 
 ```xml
-
 <dependency>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp-spring-boot-starter</artifactId>
-    <version>0.10</version>
+    <version>0.11</version>
 </dependency>
 ```
 
 Spring Boot2 引入
 
 ```xml
-
 <dependency>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp-spring-boot-starter</artifactId>
-    <version>0.10-javax</version>
+    <version>0.11-javax</version>
 </dependency>
 ```
 
 其他项目引入
 
 ```xml
-
 <dependency>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp-sdk</artifactId>
-    <version>0.10-javax</version>
+    <version>0.11</version>
+    <!-- servlet 6.0以下使用 -->
+    <!-- <version>0.11-javax</version> -->
 </dependency>
 ```
 
@@ -55,7 +54,8 @@ WxPayV3Service wxPayV3Service = WxPayV3ServiceFactory.create(xxx);
 
 ##### 2、配置必要属性,不需要对应的支付方式，则不设置其对应的appid
 
-* wx.pay.app-ids.jsapi=jsapi-appid
+* wx.pay.app-ids.jsapi_public=公众号appid
+* wx.pay.app-ids.jsapi_mini_program=小程序appid
 * wx.pay.app-ids.h5=h5-appid
 * wx.pay.app-ids.natives=native-appid
 * wx.pay.app-ids.app=app-appid

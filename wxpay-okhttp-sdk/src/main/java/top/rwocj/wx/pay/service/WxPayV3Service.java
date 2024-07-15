@@ -100,8 +100,7 @@ public class WxPayV3Service {
      * @throws WxPayException 下单失败
      */
     public WxJSAPICreateOrderRes createJSAPIOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
-        createOrderRequest.setOrderType(OrderType.jsapi);
-        return signHelper.sign(createOrder(createOrderRequest), wxPayProperties.getAppIds().get(OrderType.jsapi));
+        return signHelper.sign(createOrder(createOrderRequest), wxPayProperties.getAppIds().get(createOrderRequest.getOrderType()));
     }
 
     /**

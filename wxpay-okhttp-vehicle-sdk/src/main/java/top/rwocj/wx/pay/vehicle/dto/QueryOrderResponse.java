@@ -37,13 +37,13 @@ public class QueryOrderResponse extends AbstractResponse {
     @JacksonXmlCData
     private String openId;
 
-//    /**
-//     * 用户子标识
-//     * sub_appid下，用户的唯一标识
-//     */
-//    @JacksonXmlProperty(localName = "sub_openid")
-//    @JacksonXmlCData
-//    private String subOpenId;
+    /**
+     * 委托代扣协议id
+     * 签约成功后微信返回的委托代扣协议id
+     */
+    @JacksonXmlProperty(localName = "contract_id")
+    @JacksonXmlCData
+    private String contractId;
 
     /**
      * 是否关注公众账号

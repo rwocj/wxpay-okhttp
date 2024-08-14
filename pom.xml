@@ -4,12 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp</artifactId>
-    <version>0.11-javax</version>
+    <version>0.12-javax-SNAPSHOT</version>
     <name>wxpay-okhttp</name>
     <packaging>pom</packaging>
     <modules>
         <module>wxpay-okhttp-sdk</module>
         <module>wxpay-okhttp-spring-boot-starter</module>
+        <module>wxpay-okhttp-vehicle-sdk</module>
+        <module>wxpay-okhttp-common</module>
+        <module>wxpay-okhttp-vehicle-spring-boot-starter</module>
     </modules>
     <description>base okhttp for weixin pay v3</description>
     <url>https://github.com/rwocj/wxpay-okhttp</url>
@@ -43,12 +46,37 @@
             <dependency>
                 <groupId>top.rwocj</groupId>
                 <artifactId>wxpay-okhttp-sdk</artifactId>
-                <version>0.11-javax</version>
+                <version>0.12-javax-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>top.rwocj</groupId>
+                <artifactId>wxpay-okhttp-vehicle-sdk</artifactId>
+                <version>0.12-javax-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>top.rwocj</groupId>
+                <artifactId>wxpay-okhttp-common</artifactId>
+                <version>0.12-javax-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>top.rwocj</groupId>
                 <artifactId>wxpay-okhttp-stater-common</artifactId>
-                <version>0.11-javax</version>
+                <version>0.12-javax-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>4.12.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.13.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-xml</artifactId>
+                <version>2.13.5</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -71,15 +99,6 @@
         <profile>
             <id>release</id>
             <build>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                        <excludes>
-                            <exclude>apiclient_key_test.pem</exclude>
-                            <exclude>application-test.properties</exclude>
-                        </excludes>
-                    </testResource>
-                </testResources>
                 <plugins>
                     <!-- Javadoc -->
                     <plugin>
@@ -92,7 +111,9 @@
                             <charset>UTF-8</charset>
                             <encoding>UTF-8</encoding>
                             <docencoding>UTF-8</docencoding>
-                            <!--                            <excludePackageNames>top.rwocj.wx.pay.dto,top.rwocj.wx.pay.properties</excludePackageNames>-->
+                            <excludePackageNames>
+                                top.rwocj.wx.pay.vehicle.dto,top.rwocj.wx.pay.vehicle.service,top.rwocj.wx.pay.vehicle.utils
+                            </excludePackageNames>
                         </configuration>
                         <executions>
                             <execution>

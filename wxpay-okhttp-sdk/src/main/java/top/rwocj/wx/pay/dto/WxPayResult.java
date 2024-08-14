@@ -53,7 +53,7 @@ public class WxPayResult {
      * 支付完成时间
      */
     @JsonProperty(value = "success_time", required = true)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'+'08:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'+'08:00", timezone = "Asia/Shanghai")
     private Date successTime;
     /**
      * 支付者

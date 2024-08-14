@@ -61,7 +61,7 @@ public class WxRefundNoticeResult {
      * 当退款状态为退款成功时返回此参数
      */
     @JsonProperty(value = "success_time")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'+'08:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'+'08:00", timezone = "Asia/Shanghai")
     private Date successTime;
     /**
      * 退款入账账户

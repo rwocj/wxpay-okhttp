@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="false" scanPeriod="30 seconds">
+    <!-- <contextName>cloud</contextName> -->
+    <!-- 引用 Spring Boot 的 defaults.xml 的配置 -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p --- %-40.40logger{39}---[%4L] : %m%n"/>
+    <!-- 自定义日志级别 -->
+    <logger name="top.rwocj.wx.pay" level="DEBUG"/>
+    <!-- 开发环境日志 -->
+    <!-- 引用 Spring Boot 的 console-appender.xml 的配置 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>${CONSOLE_LOG_CHARSET:-UTF-8}</charset>
+        </encoder>
+    </appender>
+    <!-- root 日志级别 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

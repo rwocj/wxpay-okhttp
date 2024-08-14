@@ -66,13 +66,13 @@ public class WxRefundResult {
      * 示例值：2020-12-01T16:18:12+08:00
      */
     @JsonProperty(value = "success_time")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'+'08:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'+'08:00", timezone = "Asia/Shanghai")
     private Date successTime;
     /**
      * 退款受理时间
      */
     @JsonProperty("create_time")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'+'08:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'+'08:00", timezone = "Asia/Shanghai")
     private Date createTime;
     /**
      * 退款状态

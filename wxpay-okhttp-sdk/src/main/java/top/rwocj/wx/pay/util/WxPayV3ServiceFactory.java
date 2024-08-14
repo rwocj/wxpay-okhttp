@@ -3,19 +3,14 @@ package top.rwocj.wx.pay.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
 import okhttp3.OkHttpClient;
-import top.rwocj.wx.pay.core.*;
+import top.rwocj.wx.pay.common.*;
+import top.rwocj.wx.pay.core.OkHttpClientCustomizer;
 import top.rwocj.wx.pay.property.WxPayProperties;
 import top.rwocj.wx.pay.service.WxPayV3Service;
 
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -38,22 +33,11 @@ public class WxPayV3ServiceFactory {
                                         InputStream p12InputStream,
                                         ObjectMapper objectMapper,
                                         WxPayProperties wxPayProperties) throws Exception {
-        KeyStore ks = KeyStore.getInstance("PKCS12");
-        char[] charArray = wxPayProperties.getMchId().toCharArray();
-        ks.load(p12InputStream, charArray);
-        String keyAlias = null;
-        Enumeration<String> aliases = ks.aliases();
-        if (aliases.hasMoreElements()) {
-            keyAlias = aliases.nextElement();
-        }
-        PrivateKey privateKey = (PrivateKey) ks.getKey(keyAlias, charArray);
+        CertificateInfo certificateInfo = new CertificateInfo(p12InputStream, wxPayProperties.getMchId());
         //签名助手
-        SignHelper signHelper = new SignHelper(privateKey);
-        //获取证书序列号
-        Certificate certificate = ks.getCertificate(keyAlias);
-        BigInteger serialNumber = ((X509Certificate) certificate).getSerialNumber();
+        SignHelper signHelper = new SignHelper(certificateInfo.getPrivateKey());
         //初始化OkHttpClient
-        WxPayV3OkHttpInterceptor wxPayV3OkHttpInterceptor = new WxPayV3OkHttpInterceptor(signHelper, wxPayProperties.getMchId(), serialNumber.toString(16));
+        WxPayV3OkHttpInterceptor wxPayV3OkHttpInterceptor = new WxPayV3OkHttpInterceptor(signHelper, wxPayProperties.getMchId(), certificateInfo.getSerialNumber());
         OkHttpClient okHttpClient = OkHttpClientBuilderUtil.wxPayOkHttpClient(
                 wxPayV3OkHttpInterceptor,
                 okHttpClientCustomizerList).build();

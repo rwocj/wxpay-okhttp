@@ -33,3 +33,5 @@ build/
 ### 测试微信支付敏感信息 ###
 application-test.properties
 apiclient_key_test.pem
+/wxpay-okhttp-vehicle-sdk/src/test/java/top/rwocj/wx/pay/vehicle/service/WxPayVehicleServiceTest.java
+/wxpay-okhttp-vehicle-sdk/src/test/resources/apiclient_cert.p12

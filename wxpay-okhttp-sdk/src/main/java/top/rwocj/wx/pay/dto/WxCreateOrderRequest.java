@@ -28,7 +28,7 @@ public class WxCreateOrderRequest {
      * 交易结束时间
      */
     @JsonProperty("time_expire")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'+'08:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'+'08:00", timezone = "Asia/Shanghai")
     private Date timeExpire;
     /**
      * 订单金额

@@ -8,11 +8,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import top.rwocj.wx.pay.core.*;
+import top.rwocj.wx.pay.common.*;
+import top.rwocj.wx.pay.core.HttpServletRequestWxHeaders;
 import top.rwocj.wx.pay.dto.*;
 import top.rwocj.wx.pay.enums.OrderType;
 import top.rwocj.wx.pay.property.WxPayProperties;
-import top.rwocj.wx.pay.util.AesUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class WxPayV3Service {
 
@@ -100,7 +101,17 @@ public class WxPayV3Service {
      * @throws WxPayException 下单失败
      */
     public WxJSAPICreateOrderRes createJSAPIOrder(WxCreateOrderRequest createOrderRequest) throws WxPayException {
-        return signHelper.sign(createOrder(createOrderRequest), wxPayProperties.getAppIds().get(createOrderRequest.getOrderType()));
+        WxJSAPICreateOrderRes res = new WxJSAPICreateOrderRes();
+        res.setAppId(wxPayProperties.getAppIds().get(createOrderRequest.getOrderType()));
+        res.setTimeStamp(String.valueOf(System.currentTimeMillis() / 1000));
+        res.setNonceStr(UUID.randomUUID().toString().replaceAll("-", ""));
+        res.setPackageValue("prepay_id=" + createOrder(createOrderRequest));
+        res.setSignType("RSA");
+        res.setPaySign(signHelper.sign((res.getAppId() + "\n"
+                + res.getTimeStamp() + "\n"
+                + res.getNonceStr() + "\n"
+                + res.getPackageValue() + "\n").getBytes(StandardCharsets.UTF_8)));
+        return res;
     }
 
     /**
@@ -270,6 +281,7 @@ public class WxPayV3Service {
         }
         Request request = new Request.Builder()
                 .url(url)
+                .addHeader("Accept", "application/json")
                 .post(RequestBody.create(content, MediaType.parse("application/json;charset=utf-8")))
                 .build();
         log.debug("微信请求体：{}", content);
@@ -311,7 +323,6 @@ public class WxPayV3Service {
             sb.deleteCharAt(sb.lastIndexOf(","));
         }
         return sb.toString();
-
     }
 
     private String getRequestBody(InputStream inputStream) throws WxPayException {

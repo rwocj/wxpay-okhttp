@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.rwocj.wx.pay.vehicle.annotation.IgnoreSign;
 import top.rwocj.wx.pay.vehicle.dto.AbstractRequest;
+import top.rwocj.wx.pay.vehicle.dto.AbstractResponse;
 import top.rwocj.wx.pay.vehicle.dto.HttpCommonField;
 
 import javax.crypto.Mac;
@@ -50,7 +51,7 @@ public class SignUtil {
      * @param secret 签名密钥
      * @return 签名
      */
-    public static <T extends AbstractRequest> String signResponse(T obj, String secret) {
+    public static <T extends AbstractResponse> String signResponse(T obj, String secret) {
         return sign(obj, secret, true);
     }
 
@@ -88,8 +89,9 @@ public class SignUtil {
                 }
             }
             sb.append("key=").append(secret);
-            log.debug("待签名字符串：{},", sb);
-            return hmacSHA256(sb.toString(), secret).toUpperCase();
+            String sign = hmacSHA256(sb.toString(), secret).toUpperCase();
+            log.debug("待签名字符串：{},签名:{}", sb, sign);
+            return sign;
         } catch (IllegalAccessException e) {
             throw new RuntimeException("生成签名失败", e);
         }

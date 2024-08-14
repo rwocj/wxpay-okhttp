@@ -200,7 +200,7 @@ public class WxPayVehicleService {
      * @return true: 验签通过; false: 验签失败
      */
     public <T extends HttpCommonField> boolean isSignPass(T t) {
-        return isSignPass(t, true);
+        return isSignPass(t, !(t instanceof AbstractRequest));
     }
 
     /**

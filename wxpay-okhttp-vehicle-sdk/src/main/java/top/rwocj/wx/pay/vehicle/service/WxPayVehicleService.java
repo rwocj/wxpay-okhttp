@@ -211,6 +211,7 @@ public class WxPayVehicleService {
      * @return true: 验签通过; false: 验签失败
      */
     public <T extends HttpCommonField> boolean isSignPass(T t, boolean ignoreSignType) {
+        log.debug("待签名验证实体:{}", t);
         return Objects.equals(SignUtil.sign(t, wxPayVehicleProperties.getApiKey(), ignoreSignType), t.getSign());
     }
 

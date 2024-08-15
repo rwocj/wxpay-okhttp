@@ -1,6 +1,7 @@
 package top.rwocj.wx.pay.vehicle.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -276,13 +277,14 @@ public class WxPayVehicleService {
                 if (body != null) {
                     String string = body.string();
                     log.debug("微信支付响应,url:{},响应体：\n{}", url, string);
+                    JsonNode jsonNode = xmlMapper.readTree(string);
                     T t = xmlMapper.readValue(string, tClass);
                     if (t.isHttpSuccess()) {
                         String sign = t.getSign();
                         if (sign == null || sign.isEmpty()) {
                             throw new WxPayException("微信支付响应签名为空");
                         }
-                        if (!isSignPass(t)) {
+                        if (!Objects.equals(sign, SignUtil.sign(jsonNode, wxPayVehicleProperties.getApiKey(), true))) {
                             throw new WxPayException("微信支付响应签名验证失败");
                         }
                         return t;

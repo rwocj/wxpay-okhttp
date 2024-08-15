@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
-import top.rwocj.wx.pay.vehicle.annotation.IgnoreSign;
 
 /**
  * 请求和响应公共字段，作为响应时，只有当通信成功时才会返回这些字段
@@ -56,7 +55,6 @@ public abstract class HttpCommonField {
      */
     @JacksonXmlProperty(localName = "sign")
     @JsonProperty("sign")
-    @IgnoreSign
     @JacksonXmlCData
     private String sign;
 }

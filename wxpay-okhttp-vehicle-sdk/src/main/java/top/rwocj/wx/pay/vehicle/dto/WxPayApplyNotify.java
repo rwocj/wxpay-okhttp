@@ -38,6 +38,25 @@ public class WxPayApplyNotify extends AbstractRequest {
     private String returnMsg;
 
     /**
+     * 业务结果
+     * SUCCESS/FAIL
+     */
+    @JacksonXmlProperty(localName = "result_code")
+    private String resultCode;
+
+    /**
+     * 业务错误代码
+     */
+    @JacksonXmlProperty(localName = "err_code")
+    private String errCode;
+
+    /**
+     * 业务错误描述
+     */
+    @JacksonXmlProperty(localName = "err_code_des")
+    private String errCodeDes;
+
+    /**
      * 委托代扣协议id
      * 签约成功后微信返回的委托代扣协议id
      */
@@ -60,14 +79,6 @@ public class WxPayApplyNotify extends AbstractRequest {
     @JacksonXmlProperty(localName = "openid")
     @JacksonXmlCData
     private String openId;
-
-//    /**
-//     * 用户子标识
-//     * sub_appid下，用户的唯一标识
-//     */
-//    @JacksonXmlProperty(localName = "sub_openid")
-//    @JacksonXmlCData
-//    private String subOpenId;
 
     /**
      * 是否关注公众账号
@@ -195,5 +206,16 @@ public class WxPayApplyNotify extends AbstractRequest {
     @JsonIgnore
     public final boolean isHttpSuccess() {
         return "SUCCESS".equals(returnCode);
+    }
+
+
+    @JsonIgnore
+    public final boolean isBusinessSuccess() {
+        return "SUCCESS".equals(resultCode);
+    }
+
+    @JsonIgnore
+    public final boolean isSuccess() {
+        return isHttpSuccess() && isBusinessSuccess();
     }
 }

@@ -2,6 +2,7 @@ package top.rwocj.wx.pay.vehicle.utils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
@@ -95,6 +96,42 @@ public class SignUtil {
         } catch (IllegalAccessException e) {
             throw new RuntimeException("生成签名失败", e);
         }
+    }
+
+    /**
+     * 生成签名
+     *
+     * @param obj    待签名对象
+     * @param secret 签名密钥
+     * @return 签名
+     */
+    public static <T extends HttpCommonField> String sign(JsonNode obj, String secret, boolean ignoreSignType) {
+        if (obj == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        Iterator<String> fieldNamesIterator = obj.fieldNames();
+        List<String> fieldNames = new LinkedList<>();
+        fieldNamesIterator.forEachRemaining(s -> {
+            if (!Objects.equals(s, "sign")) {
+                if (!(ignoreSignType && s.equals("sign_type"))) {
+                    fieldNames.add(s);
+                }
+            }
+        });
+        List<String> sortedFieldNames = fieldNames.stream().sorted().collect(Collectors.toList());
+        for (String key : sortedFieldNames) {
+            JsonNode o = obj.get(key);
+            if (o == null || o.isNull()) {
+                continue;
+            }
+            String text = o.asText();
+            sb.append(key).append("=").append(text).append("&");
+        }
+        sb.append("key=").append(secret);
+        String sign = hmacSHA256(sb.toString(), secret).toUpperCase();
+        log.debug("待签名字符串：{},签名:{}", sb, sign);
+        return sign;
     }
 
     /**

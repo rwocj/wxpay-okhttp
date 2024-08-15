@@ -24,14 +24,6 @@ public abstract class HttpCommonField {
     @JacksonXmlCData
     private String appId;
 
-//    /**
-//     * 子商户公众账号id
-//     * 子商户号绑定的服务号，小程序，APP的appid(需要在服务商的商户平台为子商户绑定)
-//     */
-//    @JacksonXmlProperty(localName = "sub_appid")
-//    @JacksonXmlCData
-//    private String subAppId;
-
     /**
      * 商户号
      * 服务商商户号
@@ -40,14 +32,6 @@ public abstract class HttpCommonField {
     @JsonProperty("mch_id")
     @JacksonXmlCData
     private String mchId;
-
-//    /**
-//     * 子商户号
-//     * 子商户号
-//     */
-//    @JacksonXmlProperty(localName = "sub_mch_id")
-//    @JacksonXmlCData
-//    private String subMchId;
 
     /**
      * 随机串

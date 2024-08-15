@@ -19,7 +19,23 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class WxPayApplyNotify extends AbstractResponse {
+public class WxPayApplyNotify extends AbstractRequest {
+
+    /**
+     * 返回状态码
+     * SUCCESS/FAIL
+     * 此字段是通信标识，非交易标识
+     */
+    @JacksonXmlProperty(localName = "return_code")
+    private String returnCode;
+
+    /**
+     * 返回信息，如非空，为错误原因
+     * 签名失败
+     * 参数格式校验错误
+     */
+    @JacksonXmlProperty(localName = "return_msg")
+    private String returnMsg;
 
     /**
      * 委托代扣协议id
@@ -174,5 +190,10 @@ public class WxPayApplyNotify extends AbstractResponse {
     @JsonIgnore
     public boolean isTradeSuccess() {
         return "SUCCESS".equals(tradeState);
+    }
+
+    @JsonIgnore
+    public final boolean isHttpSuccess() {
+        return "SUCCESS".equals(returnCode);
     }
 }

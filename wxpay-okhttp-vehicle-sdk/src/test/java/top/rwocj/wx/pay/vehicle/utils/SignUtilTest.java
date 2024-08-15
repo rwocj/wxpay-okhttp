@@ -5,10 +5,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import top.rwocj.wx.pay.vehicle.dto.QueryOrderResponse;
-import top.rwocj.wx.pay.vehicle.dto.UserStateRequest;
 import top.rwocj.wx.pay.vehicle.dto.WxHighwayPlateNumberStatusChangeNotify;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author lqb
@@ -44,7 +41,7 @@ class SignUtilTest {
                 "<contract_id><![CDATA[01_91A63EAA189DDE32_1723617852_01_636c707cabf2de68_1]]></contract_id>\n" +
                 "</xml>";
         QueryOrderResponse queryOrderResponse = mapper.readValue(text, QueryOrderResponse.class);
-        Assertions.assertEquals(queryOrderResponse.getSign(), SignUtil.signResponse(queryOrderResponse, secret));
+        Assertions.assertEquals(queryOrderResponse.getSign(), SignUtil.sign(queryOrderResponse, secret));
     }
 
     @Test
@@ -62,7 +59,7 @@ class SignUtilTest {
                 "</xml>";
         System.out.println(text);
         WxHighwayPlateNumberStatusChangeNotify entity = mapper.readValue(text, WxHighwayPlateNumberStatusChangeNotify.class);
-        Assertions.assertEquals("71D12E66E630C002D843D71049FC0FA390597901CBE6DFD0FA67F29242321E13", SignUtil.sign(entity, secret, false));
+        Assertions.assertEquals("71D12E66E630C002D843D71049FC0FA390597901CBE6DFD0FA67F29242321E13", SignUtil.sign(entity, secret));
     }
 
     @Test

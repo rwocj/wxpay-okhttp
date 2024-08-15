@@ -201,19 +201,8 @@ public class WxPayVehicleService {
      * @return true: 验签通过; false: 验签失败
      */
     public <T extends HttpCommonField> boolean isSignPass(T t) {
-        return isSignPass(t, !(t instanceof AbstractRequest));
-    }
-
-    /**
-     * 验证签名
-     *
-     * @param t   签名相关信息
-     * @param <T> 签名基类
-     * @return true: 验签通过; false: 验签失败
-     */
-    public <T extends HttpCommonField> boolean isSignPass(T t, boolean ignoreSignType) {
         log.debug("待签名验证实体:{}", t);
-        return Objects.equals(SignUtil.sign(t, wxPayVehicleProperties.getApiKey(), ignoreSignType), t.getSign());
+        return Objects.equals(SignUtil.sign(t, wxPayVehicleProperties.getApiKey()), t.getSign());
     }
 
     /**
@@ -323,7 +312,7 @@ public class WxPayVehicleService {
         if (request.getMchId() == null) {
             request.setMchId(wxPayVehicleProperties.getMchId());
         }
-        request.setSign(SignUtil.signRequest(request, wxPayVehicleProperties.getApiKey()));
+        request.setSign(SignUtil.sign(request, wxPayVehicleProperties.getApiKey()));
     }
 
 }

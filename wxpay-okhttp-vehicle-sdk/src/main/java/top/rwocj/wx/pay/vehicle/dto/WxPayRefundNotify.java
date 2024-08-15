@@ -59,7 +59,7 @@ public class WxPayRefundNotify extends AbstractRequest {
     }
 
     @JsonIgnore
-    public final boolean isHttpSuccess() {
+    public final boolean isSuccess() {
         return "SUCCESS".equals(returnCode);
     }
 

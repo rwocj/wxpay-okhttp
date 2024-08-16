@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import top.rwocj.wx.pay.common.WxPayException;
 import top.rwocj.wx.pay.vehicle.dto.*;
 import top.rwocj.wx.pay.vehicle.enums.BillType;
+import top.rwocj.wx.pay.vehicle.enums.HighwaySceneChannelType;
 import top.rwocj.wx.pay.vehicle.property.WxPayVehicleProperties;
 import top.rwocj.wx.pay.vehicle.utils.CommonUtil;
 import top.rwocj.wx.pay.vehicle.utils.SignUtil;
@@ -99,19 +100,21 @@ public class WxPayVehicleService {
     }
 
     /**
-     * 检测用户是否正常，且包含指定车牌号
+     * 检测用户是否正常，且包含指定车牌号，用户openId与车牌号二选一,都传的话优先openid
      *
-     * @param openId   用户openId
-     * @param plateNum 车牌号
+     * @param openId      用户openId
+     * @param plateNum    车牌号
+     * @param channelType 通道类型
      * @return true: 正常 false: 不正常
+     * @see HighwaySceneChannelType
      */
-    public boolean isUserNormalAndContainsPlateNum(String openId, String plateNum) {
+    public boolean isUserNormalAndContainsPlateNum(String openId, String plateNum, String channelType) {
         UserStateRequest userStateRequest = openId == null ? UserStateRequest.highwayRequestWithPlateNumber(plateNum) : UserStateRequest.highwayRequestWithOpenId(openId);
         try {
             UserStateResponse userStateResponse = userState(userStateRequest);
             if (userStateResponse.isBusinessSuccess()) {
                 List<PlateNumberInfo> plateNumberInfos = userStateResponse.getPlateNumberInfos();
-                boolean containsPlateNum = plateNumberInfos.stream().anyMatch(plateNumberInfo -> plateNumberInfo.getPlateNumber().equals(plateNum));
+                boolean containsPlateNum = plateNumberInfos.stream().filter(s -> channelType == null || channelType.equals(s.getChannelType())).anyMatch(plateNumberInfo -> plateNumberInfo.getPlateNumber().equals(plateNum));
                 return userStateResponse.isNormal() && containsPlateNum;
             }
         } catch (WxPayException e) {

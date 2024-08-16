@@ -35,17 +35,19 @@ public class WxPayVehicleService {
     public final static String BASE_URL = "https://api.mch.weixin.qq.com";
 
     /**
-     * 无需证书的请求客户端
+     * 请求客户端
      */
-    protected final OkHttpClient noCertificateRequiredOkHttpClient;
-    /**
-     * 需要证书的请求客户端
-     */
-    protected final OkHttpClient certificateRequiredOkHttpClient;
+    protected final OkHttpClient okHttpClient;
 
+    /**
+     * xml处理
+     */
     @Getter
     protected final XmlMapper xmlMapper;
 
+    /**
+     * 微信相关配置
+     */
     @Getter
     protected final WxPayVehicleProperties wxPayVehicleProperties;
 
@@ -166,10 +168,13 @@ public class WxPayVehicleService {
      * @throws WxPayException 下单失败,包括请求失败、请求参数错误导致的失败，验签失败等
      */
     public PayRefundResponse payRefund(PayRefundRequest request) throws WxPayException {
+        if (wxPayVehicleProperties.getP12Path() == null) {
+            throw new WxPayException("退款接口需要配置api证书");
+        }
         if (request.getNotifyUrl() == null) {
             request.setNotifyUrl(wxPayVehicleProperties.getPayRefundNotifyUrl());
         }
-        return request(generateRequest(BASE_URL + "/secapi/pay/refund", request), PayRefundResponse.class, true);
+        return request(generateRequest(BASE_URL + "/secapi/pay/refund", request), PayRefundResponse.class);
     }
 
     /**
@@ -214,7 +219,7 @@ public class WxPayVehicleService {
      * @throws WxPayException 请求失败
      */
     public <T extends AbstractResponse, R extends AbstractRequest> T post(String url, R requestBody, Class<T> tClass) throws WxPayException {
-        return request(generateRequest(url, requestBody), tClass, false);
+        return request(generateRequest(url, requestBody), tClass);
     }
 
     /**
@@ -223,7 +228,7 @@ public class WxPayVehicleService {
      * @param request 请求参数
      */
     private InputStream download(Request request) throws WxPayException {
-        try (Response execute = noCertificateRequiredOkHttpClient.newCall(request).execute()) {
+        try (Response execute = okHttpClient.newCall(request).execute()) {
             log.debug("下载微信账单响应码：{}", execute.code());
             ResponseBody body = execute.body();
             if (execute.isSuccessful()) {
@@ -253,12 +258,8 @@ public class WxPayVehicleService {
         throw new WxPayException("下载微信账单失败");
     }
 
-    /**
-     * @param requiredCertificate 是否需要证书
-     */
-    protected <T extends AbstractResponse> T request(Request request, Class<T> tClass, boolean requiredCertificate) throws WxPayException {
+    protected <T extends AbstractResponse> T request(Request request, Class<T> tClass) throws WxPayException {
         String url = request.url().toString();
-        OkHttpClient okHttpClient = requiredCertificate ? certificateRequiredOkHttpClient : noCertificateRequiredOkHttpClient;
         try (Response execute = okHttpClient.newCall(request).execute()) {
             log.debug("微信支付url:{}, 响应码：{}", url, execute.code());
             ResponseBody body = execute.body();

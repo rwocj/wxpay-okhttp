@@ -17,6 +17,7 @@ import top.rwocj.wx.pay.vehicle.core.OkHttpClientCustomizer;
 import top.rwocj.wx.pay.vehicle.core.SSLOkHttpClientCustomizer;
 import top.rwocj.wx.pay.vehicle.property.WxPayVehicleProperties;
 import top.rwocj.wx.pay.vehicle.service.WxPayVehicleService;
+import top.rwocj.wx.pay.vehicle.utils.XmlUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class WxPayOkHttpVehicleAutoConfiguration implements ResourceLoaderAware 
     private ResourceLoader resourceLoader;
 
     public WxPayOkHttpVehicleAutoConfiguration(ObjectProvider<XmlMapper> xmlMapperObjectProvider) {
-        this.xmlMapper = xmlMapperObjectProvider.getIfAvailable((XmlMapper::new));
+        this.xmlMapper = xmlMapperObjectProvider.getIfAvailable(XmlUtil::getXmlMapper);
     }
 
     @Override
@@ -52,18 +53,19 @@ public class WxPayOkHttpVehicleAutoConfiguration implements ResourceLoaderAware 
     public WxPayVehicleService wxPayVehicleService(ObjectProvider<OkHttpClientCustomizer> okHttpClientCustomizerObjectProvider,
                                                    WxPayVehicleProperties wxPayVehicleProperties) throws Exception {
         List<OkHttpClientCustomizer> okHttpClientCustomizers = okHttpClientCustomizerObjectProvider.orderedStream().collect(Collectors.toList());
-        OkHttpClient noCertificateRequiredOkHttpClient = OkHttpClientBuilderUtil.wxPayOkHttpClient(null, okHttpClientCustomizers).build();
-        OkHttpClient certificateRequiredOkHttpClient = null;
+        OkHttpClient okHttpClient;
         if (wxPayVehicleProperties.getP12Path() != null) {
             CertificateInfo certificateInfo = new CertificateInfo(resourceLoader.getResource(wxPayVehicleProperties.getP12Path()).getInputStream(), wxPayVehicleProperties.getMchId());
             ArrayList<Consumer<OkHttpClient.Builder>> customizers = new ArrayList<>();
             customizers.add(new SSLOkHttpClientCustomizer(certificateInfo));
             customizers.addAll(okHttpClientCustomizers);
-            certificateRequiredOkHttpClient = OkHttpClientBuilderUtil.wxPayOkHttpClient(
+            okHttpClient = OkHttpClientBuilderUtil.wxPayOkHttpClient(
                     null,
                     customizers).build();
+        } else {
+            okHttpClient = OkHttpClientBuilderUtil.wxPayOkHttpClient(null, okHttpClientCustomizers).build();
         }
-        return new WxPayVehicleService(noCertificateRequiredOkHttpClient, certificateRequiredOkHttpClient, xmlMapper, wxPayVehicleProperties);
+        return new WxPayVehicleService(okHttpClient, xmlMapper, wxPayVehicleProperties);
     }
 
 }

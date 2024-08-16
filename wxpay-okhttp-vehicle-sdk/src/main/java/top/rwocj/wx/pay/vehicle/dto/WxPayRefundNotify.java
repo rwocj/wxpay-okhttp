@@ -52,8 +52,8 @@ public class WxPayRefundNotify extends AbstractRequest {
     private String reqInfo;
 
     @JsonIgnore
-    public WxPayRefundNotifyReqInfo getReqInfo(String key) {
-        byte[] bytes = AESUtils.decodeToByte(reqInfo, MD5Util.getMD5(key).toLowerCase());
+    public WxPayRefundNotifyReqInfo getReqInfo(String apiKey) {
+        byte[] bytes = AESUtils.decodeToByte(reqInfo, MD5Util.getMD5(apiKey).toLowerCase());
         String s = new String(bytes, StandardCharsets.UTF_8);
         return XmlUtil.parseObject(s, WxPayRefundNotifyReqInfo.class);
     }

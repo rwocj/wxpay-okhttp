@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * 对jackson进行一些常用操作的封闭，如xml字符串转实体，转List，序列化实体为字符串等，
@@ -19,6 +20,10 @@ public class XmlUtil {
 
     @Getter
     private static final XmlMapper xmlMapper = new XmlMapper();
+
+    static {
+        xmlMapper.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+    }
 
     protected XmlUtil() {
 

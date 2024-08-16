@@ -14,7 +14,7 @@ public class OkHttpClientBuilderUtil {
     public static OkHttpClient.Builder wxPayOkHttpClient(Interceptor interceptor, List<? extends Consumer<OkHttpClient.Builder>> customizers) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.hostnameVerifier((hostname, session) -> hostname.endsWith(".weixin.qq.com"))
-                .readTimeout(6000, TimeUnit.MILLISECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(10000, TimeUnit.MILLISECONDS)
                 .connectTimeout(3000, TimeUnit.MILLISECONDS);
         if (interceptor != null) {

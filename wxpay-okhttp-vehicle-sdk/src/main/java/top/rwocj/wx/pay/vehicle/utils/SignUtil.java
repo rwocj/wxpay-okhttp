@@ -74,7 +74,7 @@ public class SignUtil {
         List<String> sortedFieldNames = fieldNames.stream().sorted().collect(Collectors.toList());
         for (String key : sortedFieldNames) {
             JsonNode o = obj.get(key);
-            if (o == null || o.isNull()) {
+            if (o == null || o.isNull() || o.asText().isEmpty()) {
                 continue;
             }
             String text = o.asText();

@@ -14,7 +14,7 @@ Spring Boot3 引入
 <dependency>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp-spring-boot-starter</artifactId>
-    <version>0.11</version>
+    <version>0.12</version>
 </dependency>
 ```
 
@@ -24,7 +24,7 @@ Spring Boot2 引入
 <dependency>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp-spring-boot-starter</artifactId>
-    <version>0.11-javax</version>
+    <version>0.12-javax</version>
 </dependency>
 ```
 
@@ -34,9 +34,9 @@ Spring Boot2 引入
 <dependency>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp-sdk</artifactId>
-    <version>0.11</version>
+    <version>0.12</version>
     <!-- servlet 6.0以下使用 -->
-    <!-- <version>0.11-javax</version> -->
+    <!-- <version>0.12-javax</version> -->
 </dependency>
 ```
 

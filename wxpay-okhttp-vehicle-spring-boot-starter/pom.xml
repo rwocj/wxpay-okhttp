@@ -6,7 +6,7 @@
     <parent>
         <groupId>top.rwocj</groupId>
         <artifactId>wxpay-okhttp</artifactId>
-        <version>0.12-javax-SNAPSHOT</version>
+        <version>0.12-javax</version>
     </parent>
 
     <artifactId>wxpay-okhttp-vehicle-spring-boot-starter</artifactId>

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import top.rwocj.wx.pay.common.WxPayException;
 import top.rwocj.wx.pay.vehicle.dto.*;
 import top.rwocj.wx.pay.vehicle.enums.BillType;
+import top.rwocj.wx.pay.vehicle.enums.HighwaySceneChannelType;
 import top.rwocj.wx.pay.vehicle.property.WxPayVehicleProperties;
 import top.rwocj.wx.pay.vehicle.utils.CommonUtil;
 import top.rwocj.wx.pay.vehicle.utils.SignUtil;
@@ -35,17 +36,19 @@ public class WxPayVehicleService {
     public final static String BASE_URL = "https://api.mch.weixin.qq.com";
 
     /**
-     * 无需证书的请求客户端
+     * 请求客户端
      */
-    protected final OkHttpClient noCertificateRequiredOkHttpClient;
-    /**
-     * 需要证书的请求客户端
-     */
-    protected final OkHttpClient certificateRequiredOkHttpClient;
+    protected final OkHttpClient okHttpClient;
 
+    /**
+     * xml处理
+     */
     @Getter
     protected final XmlMapper xmlMapper;
 
+    /**
+     * 微信相关配置
+     */
     @Getter
     protected final WxPayVehicleProperties wxPayVehicleProperties;
 
@@ -97,19 +100,21 @@ public class WxPayVehicleService {
     }
 
     /**
-     * 检测用户是否正常，且包含指定车牌号
+     * 检测用户是否正常，且包含指定车牌号，用户openId与车牌号二选一,都传的话优先openid
      *
-     * @param openId   用户openId
-     * @param plateNum 车牌号
+     * @param openId      用户openId
+     * @param plateNum    车牌号
+     * @param channelType 通道类型
      * @return true: 正常 false: 不正常
+     * @see HighwaySceneChannelType
      */
-    public boolean isUserNormalAndContainsPlateNum(String openId, String plateNum) {
+    public boolean isUserNormalAndContainsPlateNum(String openId, String plateNum, String channelType) {
         UserStateRequest userStateRequest = openId == null ? UserStateRequest.highwayRequestWithPlateNumber(plateNum) : UserStateRequest.highwayRequestWithOpenId(openId);
         try {
             UserStateResponse userStateResponse = userState(userStateRequest);
             if (userStateResponse.isBusinessSuccess()) {
                 List<PlateNumberInfo> plateNumberInfos = userStateResponse.getPlateNumberInfos();
-                boolean containsPlateNum = plateNumberInfos.stream().anyMatch(plateNumberInfo -> plateNumberInfo.getPlateNumber().equals(plateNum));
+                boolean containsPlateNum = plateNumberInfos.stream().filter(s -> channelType == null || channelType.equals(s.getChannelType())).anyMatch(plateNumberInfo -> plateNumberInfo.getPlateNumber().equals(plateNum));
                 return userStateResponse.isNormal() && containsPlateNum;
             }
         } catch (WxPayException e) {
@@ -166,10 +171,13 @@ public class WxPayVehicleService {
      * @throws WxPayException 下单失败,包括请求失败、请求参数错误导致的失败，验签失败等
      */
     public PayRefundResponse payRefund(PayRefundRequest request) throws WxPayException {
+        if (wxPayVehicleProperties.getP12Path() == null) {
+            throw new WxPayException("退款接口需要配置api证书");
+        }
         if (request.getNotifyUrl() == null) {
             request.setNotifyUrl(wxPayVehicleProperties.getPayRefundNotifyUrl());
         }
-        return request(generateRequest(BASE_URL + "/secapi/pay/refund", request), PayRefundResponse.class, true);
+        return request(generateRequest(BASE_URL + "/secapi/pay/refund", request), PayRefundResponse.class);
     }
 
     /**
@@ -201,19 +209,8 @@ public class WxPayVehicleService {
      * @return true: 验签通过; false: 验签失败
      */
     public <T extends HttpCommonField> boolean isSignPass(T t) {
-        return isSignPass(t, !(t instanceof AbstractRequest));
-    }
-
-    /**
-     * 验证签名
-     *
-     * @param t   签名相关信息
-     * @param <T> 签名基类
-     * @return true: 验签通过; false: 验签失败
-     */
-    public <T extends HttpCommonField> boolean isSignPass(T t, boolean ignoreSignType) {
         log.debug("待签名验证实体:{}", t);
-        return Objects.equals(SignUtil.sign(t, wxPayVehicleProperties.getApiKey(), ignoreSignType), t.getSign());
+        return Objects.equals(SignUtil.sign(t, wxPayVehicleProperties.getApiKey()), t.getSign());
     }
 
     /**
@@ -225,7 +222,7 @@ public class WxPayVehicleService {
      * @throws WxPayException 请求失败
      */
     public <T extends AbstractResponse, R extends AbstractRequest> T post(String url, R requestBody, Class<T> tClass) throws WxPayException {
-        return request(generateRequest(url, requestBody), tClass, false);
+        return request(generateRequest(url, requestBody), tClass);
     }
 
     /**
@@ -234,7 +231,7 @@ public class WxPayVehicleService {
      * @param request 请求参数
      */
     private InputStream download(Request request) throws WxPayException {
-        try (Response execute = noCertificateRequiredOkHttpClient.newCall(request).execute()) {
+        try (Response execute = okHttpClient.newCall(request).execute()) {
             log.debug("下载微信账单响应码：{}", execute.code());
             ResponseBody body = execute.body();
             if (execute.isSuccessful()) {
@@ -264,12 +261,8 @@ public class WxPayVehicleService {
         throw new WxPayException("下载微信账单失败");
     }
 
-    /**
-     * @param requiredCertificate 是否需要证书
-     */
-    protected <T extends AbstractResponse> T request(Request request, Class<T> tClass, boolean requiredCertificate) throws WxPayException {
+    protected <T extends AbstractResponse> T request(Request request, Class<T> tClass) throws WxPayException {
         String url = request.url().toString();
-        OkHttpClient okHttpClient = requiredCertificate ? certificateRequiredOkHttpClient : noCertificateRequiredOkHttpClient;
         try (Response execute = okHttpClient.newCall(request).execute()) {
             log.debug("微信支付url:{}, 响应码：{}", url, execute.code());
             ResponseBody body = execute.body();
@@ -323,7 +316,7 @@ public class WxPayVehicleService {
         if (request.getMchId() == null) {
             request.setMchId(wxPayVehicleProperties.getMchId());
         }
-        request.setSign(SignUtil.signRequest(request, wxPayVehicleProperties.getApiKey()));
+        request.setSign(SignUtil.sign(request, wxPayVehicleProperties.getApiKey()));
     }
 
 }

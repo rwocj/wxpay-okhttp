@@ -1,25 +1,21 @@
 package top.rwocj.wx.pay.vehicle.utils;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import top.rwocj.wx.pay.vehicle.annotation.IgnoreSign;
 import top.rwocj.wx.pay.vehicle.dto.AbstractRequest;
-import top.rwocj.wx.pay.vehicle.dto.AbstractResponse;
 import top.rwocj.wx.pay.vehicle.dto.HttpCommonField;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -41,59 +37,15 @@ public class SignUtil {
      * @param secret 签名密钥
      * @return 签名
      */
-    public static <T extends AbstractRequest> String signRequest(T obj, String secret) {
-        return sign(obj, secret, false);
-    }
-
-    /**
-     * 生成签名
-     *
-     * @param obj    待签名对象
-     * @param secret 签名密钥
-     * @return 签名
-     */
-    public static <T extends AbstractResponse> String signResponse(T obj, String secret) {
-        return sign(obj, secret, true);
-    }
-
-    /**
-     * 生成签名
-     *
-     * @param obj    待签名对象
-     * @param secret 签名密钥
-     * @return 签名
-     */
-    public static <T extends HttpCommonField> String sign(T obj, String secret, boolean ignoreSignType) {
+    public static <T extends HttpCommonField> String sign(T obj, String secret) {
         if (obj == null) {
             return null;
         }
-        StringBuilder sb = new StringBuilder();
-        List<Field> fieldList = getAllFields(obj.getClass()).stream()
-                .filter(field -> !field.isAnnotationPresent(IgnoreSign.class) && !Modifier.isStatic(field.getModifiers()))
-                .sorted(Comparator.comparing(SignUtil::getKey)).collect(Collectors.toList());
+        XmlMapper xmlMapper = XmlUtil.getXmlMapper();
         try {
-            for (Field field : fieldList) {
-                field.setAccessible(true);
-                String key = getKey(field);
-                if (ignoreSignType && "sign_type".equals(key)) {
-                    continue;
-                }
-                Object o = field.get(obj);
-                if (o instanceof Date) {
-                    JsonFormat jsonFormat = field.getAnnotation(JsonFormat.class);
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(jsonFormat != null && StringUtils.isNotBlank(jsonFormat.pattern()) ? jsonFormat.pattern() : "yyyy-MM-dd HH:mm:ss");
-                    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-                    o = simpleDateFormat.format(o);
-                }
-                if (o != null) {
-                    sb.append(key).append("=").append(o).append("&");
-                }
-            }
-            sb.append("key=").append(secret);
-            String sign = hmacSHA256(sb.toString(), secret).toUpperCase();
-            log.debug("待签名字符串：{},签名:{}", sb, sign);
-            return sign;
-        } catch (IllegalAccessException e) {
+            JsonNode jsonNode = xmlMapper.readTree(xmlMapper.writeValueAsString(obj));
+            return sign(jsonNode, secret, !(obj instanceof AbstractRequest));
+        } catch (JsonProcessingException e) {
             throw new RuntimeException("生成签名失败", e);
         }
     }
@@ -105,7 +57,7 @@ public class SignUtil {
      * @param secret 签名密钥
      * @return 签名
      */
-    public static <T extends HttpCommonField> String sign(JsonNode obj, String secret, boolean ignoreSignType) {
+    public static String sign(JsonNode obj, String secret, boolean ignoreSignType) {
         if (obj == null) {
             return null;
         }
@@ -122,7 +74,7 @@ public class SignUtil {
         List<String> sortedFieldNames = fieldNames.stream().sorted().collect(Collectors.toList());
         for (String key : sortedFieldNames) {
             JsonNode o = obj.get(key);
-            if (o == null || o.isNull()) {
+            if (o == null || o.isNull() || o.asText().isEmpty()) {
                 continue;
             }
             String text = o.asText();

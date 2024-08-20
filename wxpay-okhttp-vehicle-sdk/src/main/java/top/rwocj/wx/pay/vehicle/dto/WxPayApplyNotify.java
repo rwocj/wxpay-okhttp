@@ -19,7 +19,42 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class WxPayApplyNotify extends AbstractResponse {
+public class WxPayApplyNotify extends AbstractRequest {
+
+    /**
+     * 返回状态码
+     * SUCCESS/FAIL
+     * 此字段是通信标识，非交易标识
+     */
+    @JacksonXmlProperty(localName = "return_code")
+    private String returnCode;
+
+    /**
+     * 返回信息，如非空，为错误原因
+     * 签名失败
+     * 参数格式校验错误
+     */
+    @JacksonXmlProperty(localName = "return_msg")
+    private String returnMsg;
+
+    /**
+     * 业务结果
+     * SUCCESS/FAIL
+     */
+    @JacksonXmlProperty(localName = "result_code")
+    private String resultCode;
+
+    /**
+     * 业务错误代码
+     */
+    @JacksonXmlProperty(localName = "err_code")
+    private String errCode;
+
+    /**
+     * 业务错误描述
+     */
+    @JacksonXmlProperty(localName = "err_code_des")
+    private String errCodeDes;
 
     /**
      * 委托代扣协议id
@@ -44,14 +79,6 @@ public class WxPayApplyNotify extends AbstractResponse {
     @JacksonXmlProperty(localName = "openid")
     @JacksonXmlCData
     private String openId;
-
-//    /**
-//     * 用户子标识
-//     * sub_appid下，用户的唯一标识
-//     */
-//    @JacksonXmlProperty(localName = "sub_openid")
-//    @JacksonXmlCData
-//    private String subOpenId;
 
     /**
      * 是否关注公众账号
@@ -174,5 +201,21 @@ public class WxPayApplyNotify extends AbstractResponse {
     @JsonIgnore
     public boolean isTradeSuccess() {
         return "SUCCESS".equals(tradeState);
+    }
+
+    @JsonIgnore
+    public final boolean isHttpSuccess() {
+        return "SUCCESS".equals(returnCode);
+    }
+
+
+    @JsonIgnore
+    public final boolean isBusinessSuccess() {
+        return "SUCCESS".equals(resultCode);
+    }
+
+    @JsonIgnore
+    public final boolean isSuccess() {
+        return isHttpSuccess() && isBusinessSuccess();
     }
 }

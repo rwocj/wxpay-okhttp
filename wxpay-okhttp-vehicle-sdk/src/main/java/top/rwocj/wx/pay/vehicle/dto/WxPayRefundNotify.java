@@ -26,7 +26,23 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class WxPayRefundNotify extends AbstractResponse {
+public class WxPayRefundNotify extends AbstractRequest {
+
+    /**
+     * 返回状态码
+     * SUCCESS/FAIL
+     * 此字段是通信标识，非交易标识
+     */
+    @JacksonXmlProperty(localName = "return_code")
+    private String returnCode;
+
+    /**
+     * 返回信息，如非空，为错误原因
+     * 签名失败
+     * 参数格式校验错误
+     */
+    @JacksonXmlProperty(localName = "return_msg")
+    private String returnMsg;
 
     /**
      * 加密信息
@@ -36,10 +52,15 @@ public class WxPayRefundNotify extends AbstractResponse {
     private String reqInfo;
 
     @JsonIgnore
-    public WxPayRefundNotifyReqInfo getReqInfo(String key) {
-        byte[] bytes = AESUtils.decodeToByte(reqInfo, MD5Util.getMD5(key).toLowerCase());
+    public WxPayRefundNotifyReqInfo getReqInfo(String apiKey) {
+        byte[] bytes = AESUtils.decodeToByte(reqInfo, MD5Util.getMD5(apiKey).toLowerCase());
         String s = new String(bytes, StandardCharsets.UTF_8);
         return XmlUtil.parseObject(s, WxPayRefundNotifyReqInfo.class);
+    }
+
+    @JsonIgnore
+    public final boolean isSuccess() {
+        return "SUCCESS".equals(returnCode);
     }
 
     @Data
@@ -172,6 +193,7 @@ public class WxPayRefundNotify extends AbstractResponse {
         public boolean isRefundClose() {
             return "REFUNDCLOSE".equals(refundStatus);
         }
+
     }
 
 }

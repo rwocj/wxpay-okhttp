@@ -51,13 +51,6 @@ public class UserStateRequest extends AbstractRequest {
     @JacksonXmlCData
     private String openId;
 
-//    /**
-//     * 用户在子商户appid下的唯一标识。
-//     */
-//    @JacksonXmlProperty(localName = "sub_openid")
-//    @JacksonXmlCData
-//    private String subOpenId;
-
     /**
      * 车牌号
      * 车牌号。仅包括省份+车牌，不包括特殊字符。

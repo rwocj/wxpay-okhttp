@@ -43,13 +43,6 @@ public class UserStateResponse extends AbstractResponse {
     @JacksonXmlCData
     private String openId;
 
-//    /**
-//     * 用户子标识，sub_appid下，用户的唯一标识
-//     * 可能为空
-//     */
-//    @JacksonXmlProperty(localName = "sub_openid")
-//    private String subOpenId;
-
     /**
      * 发起扣费方式
      * PROACTIVE：表示用户主动发起的免密支付

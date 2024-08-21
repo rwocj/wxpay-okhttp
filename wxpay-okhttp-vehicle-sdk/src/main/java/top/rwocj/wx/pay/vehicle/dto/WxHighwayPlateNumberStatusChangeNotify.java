@@ -77,14 +77,6 @@ public class WxHighwayPlateNumberStatusChangeNotify extends AbstractRequest {
     private String openId;
 
     /**
-     * 用户子标识
-     * sub_appid下，用户的唯一标识
-     */
-    @JacksonXmlProperty(localName = "sub_openid")
-    @JacksonXmlCData
-    private String subOpenId;
-
-    /**
      * 是否是正常状态
      */
     @JsonIgnore

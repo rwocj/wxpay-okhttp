@@ -29,14 +29,6 @@ public class UserAuthorizationRequest extends AbstractRequest {
     private String openId;
 
     /**
-     * 用户在子商户appid下的唯一标识。
-     * 此参数必传，用户在子商户appid下的唯一标识。openid和sub_openid可以选传其中之一，如果选择传sub_openid,则必须传sub_appid
-     */
-    @JacksonXmlProperty(localName = "sub_openid")
-    @JacksonXmlCData
-    private String subOpenId;
-
-    /**
      * 交易场景
      * 委托代扣的交易场景值，目前支持 ：
      * 1. PARKING：车场停车场景 ；
@@ -70,13 +62,6 @@ public class UserAuthorizationRequest extends AbstractRequest {
         this.openId = openId;
         this.plateNumber = plateNumber;
         this.tradeScene = tradeScene;
-        this.channelType = channelType;
-    }
-
-    public UserAuthorizationRequest(String subOpenId, String plateNumber, TradeScene tradeScene, String channelType) {
-        this.subOpenId = subOpenId;
-        this.plateNumber = plateNumber;
-        this.tradeScene = tradeScene.getCode();
         this.channelType = channelType;
     }
 

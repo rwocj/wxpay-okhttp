@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.zip.GZIPInputStream;
@@ -81,7 +82,8 @@ public class WxPayVehicleService {
             if (userStateResponse.isBusinessSuccess()) {
                 UserAuthorizationInfo userAuthorizationInfo = new UserAuthorizationInfo();
                 userAuthorizationInfo.setNormal(userStateResponse.isNormal());
-                userAuthorizationInfo.setContainPlateNum(userStateResponse.getPlateNumberInfos().stream().anyMatch(item -> Objects.equals(plateNum, item.getPlateNumber())));
+                userAuthorizationInfo.setContainPlateNum(userStateResponse.getPlateNumberInfos().stream()
+                        .anyMatch(item -> Objects.equals(plateNum, item.getPlateNumber()) && Arrays.asList(item.getChannelType().split(";")).contains(HighwaySceneChannelType.ETC.name())));
                 String path = userStateResponse.getPath();
                 userAuthorizationInfo.setPath(path);
                 if (path != null && (!userStateResponse.isNormal() || !userAuthorizationInfo.isContainPlateNum())) {
@@ -114,7 +116,9 @@ public class WxPayVehicleService {
             UserStateResponse userStateResponse = userState(userStateRequest);
             if (userStateResponse.isBusinessSuccess()) {
                 List<PlateNumberInfo> plateNumberInfos = userStateResponse.getPlateNumberInfos();
-                boolean containsPlateNum = plateNumberInfos.stream().filter(s -> channelType == null || channelType.equals(s.getChannelType())).anyMatch(plateNumberInfo -> plateNumberInfo.getPlateNumber().equals(plateNum));
+                boolean containsPlateNum = plateNumberInfos.stream()
+                        .filter(plateNumberInfo -> plateNumberInfo.getPlateNumber().equals(plateNum))
+                        .anyMatch(plateNumberInfo -> channelType == null || Arrays.asList(plateNumberInfo.getChannelType().split(";")).contains(channelType));
                 return userStateResponse.isNormal() && containsPlateNum;
             }
         } catch (WxPayException e) {

@@ -107,10 +107,10 @@ public class WxPayVehicleService {
      * @param openId      用户openId
      * @param plateNum    车牌号
      * @param channelType 通道类型
-     * @return true: 正常 false: 不正常
+     * @return 用户状态，如果用户状态正常，一并返回openId
      * @see HighwaySceneChannelType
      */
-    public boolean isUserNormalAndContainsPlateNum(String openId, String plateNum, String channelType) {
+    public UserState queryUserState(String openId, String plateNum, String channelType) {
         UserStateRequest userStateRequest = openId == null ? UserStateRequest.highwayRequestWithPlateNumber(plateNum) : UserStateRequest.highwayRequestWithOpenId(openId);
         try {
             UserStateResponse userStateResponse = userState(userStateRequest);
@@ -119,12 +119,12 @@ public class WxPayVehicleService {
                 boolean containsPlateNum = plateNumberInfos.stream()
                         .filter(plateNumberInfo -> plateNumberInfo.getPlateNumber().equals(plateNum))
                         .anyMatch(plateNumberInfo -> channelType == null || Arrays.asList(plateNumberInfo.getChannelType().split(";")).contains(channelType));
-                return userStateResponse.isNormal() && containsPlateNum;
+                return new UserState(userStateResponse.isNormal() && containsPlateNum, userStateResponse.getOpenId());
             }
         } catch (WxPayException e) {
             log.error("查询微信签约用户状态失败", e);
         }
-        return false;
+        return new UserState(false, openId);
     }
 
     /**

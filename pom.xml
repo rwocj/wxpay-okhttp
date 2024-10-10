@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>top.rwocj</groupId>
     <artifactId>wxpay-okhttp</artifactId>
-    <version>0.15-javax-SNAPSHOT</version>
+    <version>0.15-javax</version>
     <name>wxpay-okhttp</name>
     <packaging>pom</packaging>
     <modules>
@@ -46,17 +46,17 @@
             <dependency>
                 <groupId>top.rwocj</groupId>
                 <artifactId>wxpay-okhttp-sdk</artifactId>
-                <version>0.15-javax-SNAPSHOT</version>
+                <version>0.15-javax</version>
             </dependency>
             <dependency>
                 <groupId>top.rwocj</groupId>
                 <artifactId>wxpay-okhttp-vehicle-sdk</artifactId>
-                <version>0.15-javax-SNAPSHOT</version>
+                <version>0.15-javax</version>
             </dependency>
             <dependency>
                 <groupId>top.rwocj</groupId>
                 <artifactId>wxpay-okhttp-common</artifactId>
-                <version>0.15-javax-SNAPSHOT</version>
+                <version>0.15-javax</version>
             </dependency>
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>

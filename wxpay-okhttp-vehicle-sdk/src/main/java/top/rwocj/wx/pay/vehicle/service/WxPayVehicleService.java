@@ -85,8 +85,8 @@ public class WxPayVehicleService {
                 userAuthorizationInfo.setContainPlateNum(userStateResponse.getPlateNumberInfos().stream()
                         .anyMatch(item -> Objects.equals(plateNum, item.getPlateNumber()) && Arrays.asList(item.getChannelType().split(";")).contains(HighwaySceneChannelType.ETC.name())));
                 String path = userStateResponse.getPath();
-                userAuthorizationInfo.setPath(path);
-                if (path != null && (!userStateResponse.isNormal() || !userAuthorizationInfo.isContainPlateNum())) {
+                userAuthorizationInfo.setPath(Objects.toString(path, "/pages/route/index"));
+                if ((!userStateResponse.isNormal() || !userAuthorizationInfo.isContainPlateNum())) {
                     UserAuthorizationExtraData extraData = UserAuthorizationExtraData.highwayExtraData(openId, plateNum);
                     setCommonRequestParams(extraData);
                     extraData.setMaterialInfo(materialInfo);

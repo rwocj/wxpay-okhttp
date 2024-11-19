@@ -6,7 +6,7 @@
     <parent>
         <groupId>top.rwocj</groupId>
         <artifactId>wxpay-okhttp</artifactId>
-        <version>0.15</version>
+        <version>0.16</version>
     </parent>
 
     <artifactId>wxpay-okhttp-sdk</artifactId>

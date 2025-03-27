@@ -13,10 +13,15 @@ import lombok.Data;
 public class UserState {
 
     /**
+     * 用户状态查询是否成功
+     */
+    private boolean querySuccess;
+
+    /**
      * 用户状态是否正常并且包含车牌
      */
     @JsonProperty("isUserNormalAndContainsPlateNum")
-    private boolean userNormalAndContainsPlateNum;
+    private Boolean userNormalAndContainsPlateNum;
 
     /**
      * 用户openid

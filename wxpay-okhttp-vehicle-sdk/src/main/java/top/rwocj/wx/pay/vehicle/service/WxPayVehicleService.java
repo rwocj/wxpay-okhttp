@@ -86,15 +86,16 @@ public class WxPayVehicleService {
                         .anyMatch(item -> Objects.equals(plateNum, item.getPlateNumber()) && Arrays.asList(item.getChannelType().split(";")).contains(HighwaySceneChannelType.ETC.name())));
                 String path = userStateResponse.getPath();
                 userAuthorizationInfo.setPath(Objects.toString(path, "/pages/route/index"));
-                if ((!userStateResponse.isNormal() || !userAuthorizationInfo.isContainPlateNum())) {
+                if ((!userStateResponse.isNormal() || !userAuthorizationInfo.getContainPlateNum())) {
                     UserAuthorizationExtraData extraData = UserAuthorizationExtraData.highwayExtraData(openId, plateNum);
                     setCommonRequestParams(extraData);
                     extraData.setMaterialInfo(materialInfo);
                     userAuthorizationInfo.setExtraData(extraData);
                 }
                 return userAuthorizationInfo;
+            } else {
+                return UserAuthorizationInfo.queryFailed();
             }
-            throw new WxPayException("查询车主用户状态失败");
         } catch (WxPayException e) {
             throw new WxPayException("查询车主用户状态失败", e);
         }
@@ -114,17 +115,18 @@ public class WxPayVehicleService {
         UserStateRequest userStateRequest = openId == null ? UserStateRequest.highwayRequestWithPlateNumber(plateNum) : UserStateRequest.highwayRequestWithOpenId(openId);
         try {
             UserStateResponse userStateResponse = userState(userStateRequest);
-            if (userStateResponse.isBusinessSuccess()) {
-                List<PlateNumberInfo> plateNumberInfos = userStateResponse.getPlateNumberInfos();
-                boolean containsPlateNum = plateNumberInfos.stream()
-                        .filter(plateNumberInfo -> plateNumberInfo.getPlateNumber().equals(plateNum))
-                        .anyMatch(plateNumberInfo -> channelType == null || Arrays.asList(plateNumberInfo.getChannelType().split(";")).contains(channelType));
-                return new UserState(userStateResponse.isNormal() && containsPlateNum, userStateResponse.getOpenId());
+            if (!userStateResponse.isBusinessSuccess()) {
+                return new UserState(false, null, openId);
             }
+            List<PlateNumberInfo> plateNumberInfos = userStateResponse.getPlateNumberInfos();
+            boolean containsPlateNum = plateNumberInfos.stream()
+                    .filter(plateNumberInfo -> plateNumberInfo.getPlateNumber().equals(plateNum))
+                    .anyMatch(plateNumberInfo -> channelType == null || Arrays.asList(plateNumberInfo.getChannelType().split(";")).contains(channelType));
+            return new UserState(true, userStateResponse.isNormal() && containsPlateNum, userStateResponse.getOpenId());
         } catch (WxPayException e) {
             log.error("查询微信签约用户状态失败", e);
         }
-        return new UserState(false, openId);
+        return new UserState(true, false, openId);
     }
 
     /**

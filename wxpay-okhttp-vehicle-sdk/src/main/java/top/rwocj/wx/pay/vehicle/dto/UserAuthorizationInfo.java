@@ -1,5 +1,6 @@
 package top.rwocj.wx.pay.vehicle.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -12,14 +13,21 @@ import lombok.Data;
 public class UserAuthorizationInfo {
 
     /**
+     * 用户状态查询是否成功
+     */
+    private boolean querySuccess;
+
+    /**
      * 是否包含新办的车牌
      */
-    private boolean containPlateNum;
+    @JsonProperty("containPlateNum")
+    private Boolean containPlateNum;
 
     /**
      * 用户状态是否正常
      */
-    private boolean normal;
+    @JsonProperty("normal")
+    private Boolean normal;
 
     /**
      * 跳转路径
@@ -30,4 +38,10 @@ public class UserAuthorizationInfo {
      * 跳转需要的其他信息
      */
     private UserAuthorizationExtraData extraData;
+
+    public static UserAuthorizationInfo queryFailed() {
+        UserAuthorizationInfo userAuthorizationInfo = new UserAuthorizationInfo();
+        userAuthorizationInfo.setQuerySuccess(false);
+        return userAuthorizationInfo;
+    }
 }

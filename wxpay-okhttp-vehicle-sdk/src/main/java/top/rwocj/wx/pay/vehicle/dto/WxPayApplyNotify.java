@@ -2,6 +2,7 @@ package top.rwocj.wx.pay.vehicle.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
@@ -19,6 +20,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WxPayApplyNotify extends AbstractRequest {
 
     /**
@@ -158,6 +160,42 @@ public class WxPayApplyNotify extends AbstractRequest {
     private Integer couponCount;
 
     /**
+     * 代金券或立减优惠ID
+     */
+    @JacksonXmlProperty(localName = "coupon_id_0")
+    private String couponId1;
+
+    /**
+     * 单个代金券或立减优惠支付金额
+     */
+    @JacksonXmlProperty(localName = "coupon_fee_0")
+    private Integer couponFee1;
+
+    /**
+     * 代金券或立减优惠ID
+     */
+    @JacksonXmlProperty(localName = "coupon_id_1")
+    private String couponId2;
+
+    /**
+     * 单个代金券或立减优惠支付金额
+     */
+    @JacksonXmlProperty(localName = "coupon_fee_1")
+    private Integer couponFee2;
+
+    /**
+     * 代金券或立减优惠ID
+     */
+    @JacksonXmlProperty(localName = "coupon_id_2")
+    private String couponId3;
+
+    /**
+     * 单个代金券或立减优惠支付金额
+     */
+    @JacksonXmlProperty(localName = "coupon_fee_2")
+    private Integer couponFee3;
+
+    /**
      * 微信支付订单号
      */
     @JacksonXmlProperty(localName = "transaction_id")
@@ -207,7 +245,6 @@ public class WxPayApplyNotify extends AbstractRequest {
     public final boolean isHttpSuccess() {
         return "SUCCESS".equals(returnCode);
     }
-
 
     @JsonIgnore
     public final boolean isBusinessSuccess() {
